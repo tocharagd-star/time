@@ -271,34 +271,25 @@ h1 {
   font-weight: 700;
   min-width: 130px;
   text-align: center;
-  height: 1.2em;
   line-height: 1.2;
-  overflow: hidden;
   position: relative;
   transition: font-size 1s ease;
   text-shadow: 0 2px 20px rgba(0,0,0,0.95), 0 0 40px rgba(0,0,0,0.6);
 }
 
-.number .old, .number .new {
-  display: block;
-  position: absolute;
-  width: 100%;
-  left: 0;
+.number .current {
+  display: inline-block;
+  transform-origin: center center;
 }
 
-.number .current { display: block; position: relative; }
-
-.number .old { animation: fall-out 0.4s ease-in forwards; }
-.number .new { animation: rise-in 0.4s ease-out forwards; }
-
-@keyframes fall-out {
-  0%   { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(100%); opacity: 0; }
+/* НОВАЯ АНИМАЦИЯ — пульс с цветом */
+.pulse-tick {
+  animation: pulse-tick 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
 }
 
-@keyframes rise-in {
-  0%   { transform: translateY(-100%); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+@keyframes pulse-tick {
+  0%   { transform: scale(1.45); color: #ff3030; text-shadow: 0 0 30px rgba(255,60,60,0.8), 0 2px 20px rgba(0,0,0,0.95); }
+  100% { transform: scale(1);    color: #ffffff; text-shadow: 0 2px 20px rgba(0,0,0,0.95), 0 0 40px rgba(0,0,0,0.6); }
 }
 
 .label {
@@ -390,7 +381,6 @@ h1 {
 
 @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-/* кнопка звука */
 .sound-btn {
   position: fixed;
   top: 20px;
@@ -410,6 +400,39 @@ h1 {
 .sound-btn:hover {
   background: rgba(0,0,0,0.8);
   border-color: rgba(255,255,255,0.6);
+}
+
+/* оверлей для активации звука */
+.sound-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.sound-overlay .msg {
+  text-align: center;
+  font-family: monospace;
+  color: #fff;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 30px 50px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(0,0,0,0.5);
+}
+
+.sound-overlay .msg small {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-top: 10px;
+  letter-spacing: 2px;
 }
 
 @media (max-width: 600px) {
@@ -452,7 +475,7 @@ h1 {
   <div class="bird bird-3"></div>
 </div>
 
-<button class="sound-btn" id="soundBtn">🔇 SOUND OFF</button>
+<button class="sound-btn" id="soundBtn">🔊 SOUND ON</button>
 
 <h1 id="title">days left</h1>
 
@@ -475,8 +498,16 @@ h1 {
   </div>
 </div>
 
+<!-- оверлей чтобы активировать звук -->
+<div class="sound-overlay" id="soundOverlay">
+  <div class="msg">
+    CLICK TO START
+    <small>включить звук</small>
+  </div>
+</div>
+
 <script>
-// генерация звёзд
+// звёзды
 const starsContainer = document.getElementById('stars');
 for (let i = 0; i < 60; i++) {
   const s = document.createElement('div');
@@ -489,11 +520,11 @@ for (let i = 0; i < 60; i++) {
   starsContainer.appendChild(s);
 }
 
-// ========== ЗВУК ТИКА ==========
+// ========== ЗВУК ==========
 let audioCtx = null;
 let tickBuffer = null;
-let soundEnabled = false;
-let tickToggle = false; // tick / tock
+let soundEnabled = true;
+let tickToggle = false;
 
 async function loadTick() {
   try {
@@ -502,40 +533,43 @@ async function loadTick() {
     const arr = await resp.arrayBuffer();
     tickBuffer = await audioCtx.decodeAudioData(arr);
   } catch (e) {
-    console.log('Не удалось загрузить tick.wav', e);
+    console.log('Не загрузился tick.wav', e);
   }
 }
 
 function playTick() {
   if (!soundEnabled || !audioCtx || !tickBuffer) return;
-  
   const src = audioCtx.createBufferSource();
   src.buffer = tickBuffer;
-  
-  // ТИК = высокий, ТАК = низкий
   src.playbackRate.value = tickToggle ? 0.85 : 1.15;
   tickToggle = !tickToggle;
-  
   const gain = audioCtx.createGain();
   gain.gain.value = 0.7;
-  
   src.connect(gain);
   gain.connect(audioCtx.destination);
   src.start();
 }
 
-// кнопка
+// оверлей запуска
+const overlay = document.getElementById('soundOverlay');
 const soundBtn = document.getElementById('soundBtn');
-soundBtn.addEventListener('click', async () => {
-  if (!audioCtx) await loadTick();
+
+overlay.addEventListener('click', async () => {
+  await loadTick();
   if (audioCtx && audioCtx.state === 'suspended') {
     await audioCtx.resume();
   }
+  overlay.style.display = 'none';
+});
+
+soundBtn.addEventListener('click', async () => {
+  if (!audioCtx) await loadTick();
+  if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
   soundEnabled = !soundEnabled;
   soundBtn.textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
 });
 
-// ============ ТАЙМЕР ============
+// ========== ТАЙМЕР ==========
 const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
 
 const containers = {
@@ -552,7 +586,7 @@ let initialized = false;
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
-function setNumber(container, val) {
+function setNumberBeat(container, val) {
   const cur = container.querySelector('.current');
   if (cur) {
     cur.textContent = val;
@@ -562,30 +596,14 @@ function setNumber(container, val) {
   }
 }
 
-function animateChange(container, newVal) {
-  const current = container.querySelector('.current');
-  if (!current) return;
-
-  const oldSpan = document.createElement('span');
-  oldSpan.className = 'old';
-  oldSpan.textContent = current.textContent;
-
-  const newSpan = document.createElement('span');
-  newSpan.className = 'new';
-  newSpan.textContent = newVal;
-
-  container.appendChild(oldSpan);
-  container.appendChild(newSpan);
-  container.removeChild(current);
-
-  setTimeout(() => {
-    if (oldSpan.parentNode) oldSpan.remove();
-    newSpan.className = 'current';
-    newSpan.style.animation = 'none';
-    newSpan.style.transform = 'none';
-    newSpan.style.opacity = '1';
-    newSpan.style.position = 'relative';
-  }, 400);
+// НОВАЯ АНИМАЦИЯ — пульс
+function pulseChange(container, newVal) {
+  const cur = container.querySelector('.current');
+  if (!cur) return;
+  cur.textContent = newVal;
+  cur.classList.remove('pulse-tick');
+  void cur.offsetWidth;
+  cur.classList.add('pulse-tick');
 }
 
 function enterFinalMode() {
@@ -653,13 +671,12 @@ function update() {
 
   for (const key in now) {
     if (now[key] !== prev[key]) {
-      if (key === 'seconds' && prev[key] !== undefined) {
-        secondsChanged = true;
-      }
+      if (key === 'seconds' && prev[key] !== undefined) secondsChanged = true;
+
       if (finalMode && key === 'seconds') {
-        setNumber(containers[key], now[key]);
+        setNumberBeat(containers[key], now[key]);
       } else if (prev[key] !== undefined) {
-        animateChange(containers[key], now[key]);
+        pulseChange(containers[key], now[key]);
       } else {
         const cur = containers[key].querySelector('.current');
         if (cur) cur.textContent = now[key];
@@ -668,11 +685,7 @@ function update() {
     }
   }
 
-  // звук каждую секунду
-  if (secondsChanged && initialized) {
-    playTick();
-  }
-  
+  if (secondsChanged && initialized) playTick();
   if (!initialized) initialized = true;
 }
 
