@@ -11,8 +11,14 @@
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
-  background: #000;
+  background: #1a1a1a;
   color: #fff;
   font-family: monospace;
   display: flex;
@@ -20,7 +26,44 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  overflow: hidden;
+  position: relative;
+}
+
+.sky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(60,60,70,0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(40,40,50,0.6) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(50,50,60,0.4) 0%, transparent 60%),
+    linear-gradient(180deg, #1a1a1f 0%, #2a2a32 50%, #1a1a1f 100%);
+  z-index: 0;
+}
+
+.lightning-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+#storm-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
 }
 
 h1 {
@@ -30,12 +73,17 @@ h1 {
   letter-spacing: 5px;
   text-transform: uppercase;
   transition: opacity 1s ease;
+  position: relative;
+  z-index: 10;
+  text-shadow: 0 0 20px rgba(0,0,0,0.8);
 }
 
 .countdown {
   display: flex;
   gap: 50px;
   transition: gap 1s ease;
+  position: relative;
+  z-index: 10;
 }
 
 .unit {
@@ -55,6 +103,7 @@ h1 {
   overflow: hidden;
   position: relative;
   transition: font-size 1s ease;
+  text-shadow: 0 0 20px rgba(0,0,0,0.8);
 }
 
 .number .old,
@@ -70,13 +119,8 @@ h1 {
   position: relative;
 }
 
-.number .old {
-  animation: fall-out 0.4s ease-in forwards;
-}
-
-.number .new {
-  animation: rise-in 0.4s ease-out forwards;
-}
+.number .old { animation: fall-out 0.4s ease-in forwards; }
+.number .new { animation: rise-in 0.4s ease-out forwards; }
 
 @keyframes fall-out {
   0%   { transform: translateY(0); opacity: 1; }
@@ -93,8 +137,9 @@ h1 {
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-top: 10px;
-  opacity: 0.4;
+  opacity: 0.5;
   transition: opacity 1s ease;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -104,18 +149,14 @@ h1 {
   position: absolute;
 }
 
-.final-mode .countdown {
-  gap: 0;
-}
+.final-mode .countdown { gap: 0; }
 
 .final-mode #seconds {
   font-size: 14rem;
   overflow: visible;
 }
 
-.final-mode #sec-label {
-  opacity: 0;
-}
+.final-mode #sec-label { opacity: 0; }
 
 .beat {
   animation: beat 0.8s cubic-bezier(0.0, 0.0, 0.2, 1) forwards;
@@ -164,17 +205,11 @@ h1 {
 
 @keyframes glitch-r {
   0%   { transform: translate(6px, -4px); }
-  25%  { transform: translate(-7px, 3px); }
-  50%  { transform: translate(4px, -2px); }
-  75%  { transform: translate(-3px, 5px); }
   100% { transform: translate(0, 0); opacity: 0; }
 }
 
 @keyframes glitch-b {
   0%   { transform: translate(-5px, 3px); }
-  25%  { transform: translate(6px, -4px); }
-  50%  { transform: translate(-4px, 2px); }
-  75%  { transform: translate(3px, -3px); }
   100% { transform: translate(0, 0); opacity: 0; }
 }
 
@@ -184,14 +219,8 @@ h1 {
 
 @keyframes physics-fall {
   0%    { transform: translateY(0) rotate(0deg); opacity: 1; }
-  5%    { transform: translateY(5px) rotate(0.5deg); }
-  12%   { transform: translateY(20px) rotate(-1deg); }
-  20%   { transform: translateY(60px) rotate(1.5deg); }
-  30%   { transform: translateY(140px) rotate(-2deg); opacity: 1; }
-  42%   { transform: translateY(280px) rotate(3deg); opacity: 0.9; }
+  30%   { transform: translateY(140px) rotate(-2deg); }
   55%   { transform: translateY(500px) rotate(-3.5deg); opacity: 0.7; }
-  70%   { transform: translateY(800px) rotate(5deg); opacity: 0.4; }
-  85%   { transform: translateY(1200px) rotate(-4deg); opacity: 0.15; }
   100%  { transform: translateY(2000px) rotate(7deg); opacity: 0; }
 }
 
@@ -206,6 +235,8 @@ h1 {
   text-transform: uppercase;
   opacity: 0;
   animation: fade-in 3s ease-out 2.5s forwards;
+  z-index: 100;
+  text-shadow: 0 0 30px rgba(0,0,0,0.9);
 }
 
 @keyframes fade-in {
@@ -222,6 +253,10 @@ h1 {
 </style>
 </head>
 <body>
+
+<div class="sky"></div>
+<canvas id="storm-canvas"></canvas>
+<div class="lightning-flash" id="flash"></div>
 
 <h1 id="title">days left</h1>
 
@@ -245,6 +280,7 @@ h1 {
 </div>
 
 <script>
+// ============ ТАЙМЕР ============
 const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
 
 const containers = {
@@ -258,9 +294,7 @@ let prev = {};
 let finalMode = false;
 let ended = false;
 
-function pad(n) {
-  return String(n).padStart(2, '0');
-}
+function pad(n) { return String(n).padStart(2, '0'); }
 
 function setNumber(container, val) {
   const cur = container.querySelector('.current');
@@ -341,11 +375,7 @@ function update() {
   if (ended) return;
 
   let diff = target - Date.now();
-
-  if (diff <= 0) {
-    doEnd();
-    return;
-  }
+  if (diff <= 0) { doEnd(); return; }
 
   const totalSeconds = Math.ceil(diff / 1000);
 
@@ -354,9 +384,7 @@ function update() {
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
 
-  if (totalSeconds <= 10) {
-    enterFinalMode();
-  }
+  if (totalSeconds <= 10) enterFinalMode();
 
   const now = {
     days: pad(d),
@@ -382,6 +410,214 @@ function update() {
 
 update();
 setInterval(update, 1000);
+
+// ============ ГРОЗА ============
+const canvas = document.getElementById('storm-canvas');
+const ctx = canvas.getContext('2d');
+const flash = document.getElementById('flash');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// === ДОЖДЬ ===
+const raindrops = [];
+const RAIN_COUNT = 250;
+
+for (let i = 0; i < RAIN_COUNT; i++) {
+  raindrops.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    length: 10 + Math.random() * 15,
+    speed: 8 + Math.random() * 7,
+    opacity: 0.2 + Math.random() * 0.4
+  });
+}
+
+// === МОЛНИИ ===
+function makeLightning() {
+  const startX = Math.random() * canvas.width;
+  const segments = [{x: startX, y: 0}];
+  const branches = [];
+  let x = startX;
+  let y = 0;
+  const endY = canvas.height * (0.6 + Math.random() * 0.3);
+
+  while (y < endY) {
+    y += 15 + Math.random() * 25;
+    x += (Math.random() - 0.5) * 60;
+    segments.push({x, y});
+
+    // ответвление
+    if (Math.random() < 0.35 && segments.length > 2) {
+      const branch = [{x, y}];
+      let bx = x, by = y;
+      const blen = 4 + Math.floor(Math.random() * 5);
+      const bdir = (Math.random() - 0.5) * 2;
+      for (let i = 0; i < blen; i++) {
+        by += 8 + Math.random() * 18;
+        bx += bdir * (5 + Math.random() * 15) + (Math.random() - 0.5) * 20;
+        branch.push({x: bx, y: by});
+      }
+      branches.push(branch);
+    }
+  }
+
+  return {segments, life: 1, branches, frame: 0};
+}
+
+let activeLightning = null;
+let lightningTimer = 0;
+let nextLightning = 60; // первая молния через 1 секунду
+
+function triggerLightning() {
+  activeLightning = makeLightning();
+
+  // основная вспышка
+  flash.style.transition = 'none';
+  flash.style.opacity = '0.85';
+  setTimeout(() => {
+    flash.style.transition = 'opacity 0.2s ease-out';
+    flash.style.opacity = '0';
+  }, 60);
+
+  // вторая вспышка
+  setTimeout(() => {
+    flash.style.transition = 'none';
+    flash.style.opacity = '0.5';
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.35s ease-out';
+      flash.style.opacity = '0';
+    }, 50);
+  }, 220);
+}
+
+function drawLightning(l) {
+  // ШИРОКОЕ СВЕЧЕНИЕ (внешний glow)
+  ctx.save();
+  ctx.strokeStyle = `rgba(150, 180, 255, ${l.life * 0.4})`;
+  ctx.lineWidth = 18;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(l.segments[0].x, l.segments[0].y);
+  for (let i = 1; i < l.segments.length; i++) {
+    ctx.lineTo(l.segments[i].x, l.segments[i].y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // СРЕДНЕЕ СВЕЧЕНИЕ
+  ctx.save();
+  ctx.strokeStyle = `rgba(200, 220, 255, ${l.life * 0.7})`;
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(l.segments[0].x, l.segments[0].y);
+  for (let i = 1; i < l.segments.length; i++) {
+    ctx.lineTo(l.segments[i].x, l.segments[i].y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // ЯДРО (яркое белое)
+  ctx.save();
+  ctx.strokeStyle = `rgba(255, 255, 255, ${l.life})`;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(l.segments[0].x, l.segments[0].y);
+  for (let i = 1; i < l.segments.length; i++) {
+    ctx.lineTo(l.segments[i].x, l.segments[i].y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // ОТВЕТВЛЕНИЯ — свечение
+  ctx.save();
+  ctx.strokeStyle = `rgba(180, 200, 255, ${l.life * 0.5})`;
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  l.branches.forEach(br => {
+    ctx.beginPath();
+    ctx.moveTo(br[0].x, br[0].y);
+    for (let i = 1; i < br.length; i++) {
+      ctx.lineTo(br[i].x, br[i].y);
+    }
+    ctx.stroke();
+  });
+  ctx.restore();
+
+  // ОТВЕТВЛЕНИЯ — ядро
+  ctx.save();
+  ctx.strokeStyle = `rgba(255, 255, 255, ${l.life * 0.9})`;
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = 'round';
+  l.branches.forEach(br => {
+    ctx.beginPath();
+    ctx.moveTo(br[0].x, br[0].y);
+    for (let i = 1; i < br.length; i++) {
+      ctx.lineTo(br[i].x, br[i].y);
+    }
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // дождь
+  ctx.strokeStyle = 'rgba(180, 200, 220, 0.4)';
+  ctx.lineWidth = 1;
+  for (const drop of raindrops) {
+    ctx.globalAlpha = drop.opacity;
+    ctx.beginPath();
+    ctx.moveTo(drop.x, drop.y);
+    ctx.lineTo(drop.x - 2, drop.y + drop.length);
+    ctx.stroke();
+
+    drop.y += drop.speed;
+    drop.x -= 2;
+
+    if (drop.y > canvas.height) {
+      drop.y = -20;
+      drop.x = Math.random() * canvas.width + 100;
+    }
+    if (drop.x < 0) drop.x = canvas.width;
+  }
+  ctx.globalAlpha = 1;
+
+  // молния — держится дольше
+  if (activeLightning) {
+    activeLightning.frame++;
+    // первые 8 кадров — яркая, потом плавно гаснет
+    if (activeLightning.frame < 8) {
+      activeLightning.life = 1;
+    } else {
+      activeLightning.life -= 0.04;
+    }
+    drawLightning(activeLightning);
+    if (activeLightning.life <= 0) activeLightning = null;
+  }
+
+  // таймер молний
+  lightningTimer++;
+  if (lightningTimer >= nextLightning) {
+    triggerLightning();
+    lightningTimer = 0;
+    nextLightning = 100 + Math.random() * 250;
+  }
+
+  requestAnimationFrame(animate);
+}
+
+animate();
 </script>
 
 </body>
