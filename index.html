@@ -4,11 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Countdown</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sigmar&display=swap" rel="stylesheet">
-
 <style>
 * {
   margin: 0;
@@ -23,8 +18,8 @@ html, body {
 }
 
 body {
-  color: #cce8ff;
-  font-family: 'Sigmar', cursive;
+  color: #fff;
+  font-family: monospace;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,23 +27,21 @@ body {
   min-height: 100vh;
   position: relative;
   background: #000;
-}
-
-/* каждая буква/цифра наклонена случайно — FNAF стиль */
-.ch {
-  display: inline-block;
+  perspective: 600px;
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 50px;
-  font-weight: 400;
-  letter-spacing: 8px;
+  font-weight: 900;
+  letter-spacing: 5px;
   text-transform: uppercase;
   transition: opacity 1s ease;
   position: relative;
   z-index: 10;
-  color: #d4ecff;
+  /* перспектива — узко сверху, шире снизу */
+  transform: perspective(400px) rotateX(25deg);
+  transform-style: preserve-3d;
 }
 
 .countdown {
@@ -57,6 +50,9 @@ h1 {
   transition: gap 1s ease;
   position: relative;
   z-index: 10;
+  /* основной текст — широко по краям */
+  transform: perspective(800px) rotateX(-15deg);
+  transform-style: preserve-3d;
 }
 
 .unit {
@@ -67,14 +63,13 @@ h1 {
 }
 
 .number {
-  font-size: 6.5rem;
-  font-weight: 400;
-  min-width: 160px;
+  font-size: 5.5rem;
+  font-weight: 900;
+  min-width: 140px;
   text-align: center;
-  line-height: 1.1;
+  line-height: 1.2;
   position: relative;
   transition: font-size 1s ease;
-  color: #d4ecff;
 }
 
 .number .current {
@@ -88,17 +83,16 @@ h1 {
 
 @keyframes pulse-tick {
   0%   { transform: scale(1.45); color: #ff3030; }
-  100% { transform: scale(1);    color: #d4ecff; }
+  100% { transform: scale(1);    color: #ffffff; }
 }
 
 .label {
-  font-family: 'Sigmar', cursive;
-  font-size: 1rem;
-  letter-spacing: 4px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 3px;
   text-transform: uppercase;
   margin-top: 14px;
   opacity: 0.6;
-  color: #a8c8dc;
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -108,15 +102,15 @@ h1 {
   position: absolute;
 }
 
-.final-mode .countdown { gap: 0; }
-.final-mode #seconds { font-size: 17rem; overflow: visible; }
+.final-mode .countdown { gap: 0; transform: perspective(800px) rotateX(-10deg); }
+.final-mode #seconds { font-size: 15rem; overflow: visible; }
 .final-mode #sec-label { opacity: 0; }
 
 .beat { animation: beat 0.8s cubic-bezier(0.0, 0.0, 0.2, 1) forwards; }
 
 @keyframes beat {
   0%   { transform: scale(1.5); color: #ff0000; }
-  100% { transform: scale(1); color: #d4ecff; }
+  100% { transform: scale(1); color: #ffffff; }
 }
 
 .glitch-zero {
@@ -167,24 +161,24 @@ h1 {
 .end-text {
   position: fixed;
   top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Sigmar', cursive;
-  font-size: 5rem;
-  letter-spacing: 12px;
+  transform: translate(-50%, -50%) perspective(800px) rotateX(-15deg);
+  font-size: 4rem;
+  font-family: monospace;
+  font-weight: 900;
+  letter-spacing: 10px;
   text-transform: uppercase;
   opacity: 0;
   animation: fade-in 3s ease-out 2.5s forwards;
   z-index: 100;
-  color: #d4ecff;
 }
 
 @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
 
 @media (max-width: 600px) {
   .countdown { gap: 20px; }
-  .number { font-size: 3rem; min-width: 75px; }
+  .number { font-size: 2.8rem; min-width: 70px; }
   .final-mode #seconds { font-size: 7rem; }
-  h1 { font-size: 1.6rem; margin-bottom: 30px; }
+  h1 { font-size: 1.4rem; margin-bottom: 30px; }
 }
 </style>
 </head>
@@ -212,42 +206,6 @@ h1 {
 </div>
 
 <script>
-// каждая буква под небольшим случайным углом — FNAF-стиль
-function deformText(element) {
-  const text = element.textContent;
-  element.textContent = '';
-  for (const ch of text) {
-    const span = document.createElement('span');
-    span.className = 'ch';
-    span.textContent = ch === ' ' ? '\u00A0' : ch;
-    const rot = (Math.random() - 0.5) * 12;
-    const scaleY = 0.92 + Math.random() * 0.2;
-    const transY = (Math.random() - 0.5) * 6;
-    span.style.transform = `translateY(${transY}px) rotate(${rot}deg) scaleY(${scaleY})`;
-    element.appendChild(span);
-  }
-}
-
-function deformNumber(spanCurrent) {
-  const text = spanCurrent.textContent;
-  spanCurrent.innerHTML = '';
-  for (const ch of text) {
-    const sp = document.createElement('span');
-    sp.className = 'ch';
-    sp.textContent = ch;
-    const rot = (Math.random() - 0.5) * 10;
-    const scaleY = 0.92 + Math.random() * 0.18;
-    const transY = (Math.random() - 0.5) * 5;
-    sp.style.transform = `translateY(${transY}px) rotate(${rot}deg) scaleY(${scaleY})`;
-    spanCurrent.appendChild(sp);
-  }
-}
-
-function deformAll() {
-  deformText(document.getElementById('title'));
-  document.querySelectorAll('.label').forEach(deformText);
-}
-
 // ========== ЗВУК ==========
 let audioCtx = null;
 let tickBuffer = null;
@@ -308,7 +266,6 @@ function setNumberBeat(container, val) {
   const cur = container.querySelector('.current');
   if (cur) {
     cur.textContent = val;
-    deformNumber(cur);
     cur.classList.remove('beat');
     void cur.offsetWidth;
     cur.classList.add('beat');
@@ -319,7 +276,6 @@ function pulseChange(container, newVal) {
   const cur = container.querySelector('.current');
   if (!cur) return;
   cur.textContent = newVal;
-  deformNumber(cur);
   cur.classList.remove('pulse-tick');
   void cur.offsetWidth;
   cur.classList.add('pulse-tick');
@@ -346,7 +302,7 @@ function doEnd() {
   zero.classList.add('glitch-zero');
   setTimeout(() => {
     zero.classList.remove('glitch-zero');
-    zero.style.color = '#d4ecff';
+    zero.style.color = '#fff';
     void zero.offsetWidth;
     zero.classList.add('physics-fall');
   }, 700);
@@ -356,7 +312,6 @@ function doEnd() {
     endText.className = 'end-text';
     endText.textContent = '???';
     document.body.appendChild(endText);
-    deformText(endText);
   }, 2500);
 }
 
@@ -386,10 +341,7 @@ function update() {
         pulseChange(containers[key], now[key]);
       } else {
         const cur = containers[key].querySelector('.current');
-        if (cur) {
-          cur.textContent = now[key];
-          deformNumber(cur);
-        }
+        if (cur) cur.textContent = now[key];
       }
       prev[key] = now[key];
     }
@@ -398,7 +350,6 @@ function update() {
   if (!initialized) initialized = true;
 }
 
-deformAll();
 update();
 setInterval(update, 1000);
 </script>
