@@ -29,69 +29,6 @@ body {
   background: #000;
 }
 
-/* улыбка SVG по центру за текстом */
-.smile-wrap {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 80vmin;
-  height: 80vmin;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.85;
-}
-
-.smile-wrap svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.smile-path {
-  fill: none;
-  stroke: #fff;
-  stroke-width: 6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: draw-smile 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
-}
-
-.eye {
-  fill: #fff;
-  opacity: 0;
-  animation: eye-appear 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
-}
-
-.eye-left  { animation-delay: 0.8s; }
-.eye-right { animation-delay: 1.0s; }
-
-@keyframes draw-smile {
-  0%   { stroke-dashoffset: 1000; opacity: 0; }
-  20%  { opacity: 1; }
-  50%  { stroke-dashoffset: 0; opacity: 1; }
-  85%  { stroke-dashoffset: 0; opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0; }
-}
-
-@keyframes eye-appear {
-  0%, 25% { opacity: 0; transform: scale(0); }
-  40%     { opacity: 1; transform: scale(1.2); }
-  50%     { opacity: 1; transform: scale(1); }
-  85%     { opacity: 1; }
-  100%    { opacity: 0; }
-}
-
-/* глаза вращаются вокруг своего центра */
-.eye {
-  transform-origin: center center;
-  transform-box: fill-box;
-}
-
 h1 {
   font-size: 2rem;
   margin-bottom: 50px;
@@ -101,7 +38,6 @@ h1 {
   transition: opacity 1s ease;
   position: relative;
   z-index: 10;
-  text-shadow: 0 0 20px #000, 0 0 40px #000;
 }
 
 .countdown {
@@ -127,7 +63,6 @@ h1 {
   line-height: 1.2;
   position: relative;
   transition: font-size 1s ease;
-  text-shadow: 0 0 20px #000, 0 0 40px #000;
 }
 
 .number .current {
@@ -140,8 +75,8 @@ h1 {
 }
 
 @keyframes pulse-tick {
-  0%   { transform: scale(1.45); color: #ff3030; text-shadow: 0 0 30px rgba(255,60,60,0.8), 0 0 20px #000; }
-  100% { transform: scale(1);    color: #ffffff; text-shadow: 0 0 20px #000, 0 0 40px #000; }
+  0%   { transform: scale(1.45); color: #ff3030; }
+  100% { transform: scale(1);    color: #ffffff; }
 }
 
 .label {
@@ -149,9 +84,8 @@ h1 {
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-top: 10px;
-  opacity: 0.75;
+  opacity: 0.5;
   transition: opacity 1s ease;
-  text-shadow: 0 0 10px #000;
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -228,31 +162,9 @@ h1 {
   opacity: 0;
   animation: fade-in 3s ease-out 2.5s forwards;
   z-index: 100;
-  text-shadow: 0 0 30px rgba(0,0,0,0.9);
 }
 
 @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
-
-.sound-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 200;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: #fff;
-  font-family: monospace;
-  font-size: 14px;
-  padding: 8px 14px;
-  cursor: pointer;
-  letter-spacing: 2px;
-  transition: all 0.2s;
-}
-
-.sound-btn:hover {
-  background: rgba(0,0,0,0.8);
-  border-color: rgba(255,255,255,0.6);
-}
 
 @media (max-width: 600px) {
   .countdown { gap: 20px; }
@@ -263,18 +175,6 @@ h1 {
 </style>
 </head>
 <body>
-
-<div class="smile-wrap">
-  <svg viewBox="0 0 400 400">
-    <!-- глаза -->
-    <circle class="eye eye-left"  cx="140" cy="160" r="18"/>
-    <circle class="eye eye-right" cx="260" cy="160" r="18"/>
-    <!-- улыбка -->
-    <path class="smile-path" d="M 100 230 Q 200 330 300 230"/>
-  </svg>
-</div>
-
-<button class="sound-btn" id="soundBtn">🔊 SOUND ON</button>
 
 <h1 id="title">days left</h1>
 
@@ -301,7 +201,6 @@ h1 {
 // ========== ЗВУК ==========
 let audioCtx = null;
 let tickBuffer = null;
-let soundEnabled = true;
 let tickToggle = false;
 
 async function loadTick() {
@@ -320,7 +219,7 @@ async function loadTick() {
 }
 
 function playTick() {
-  if (!soundEnabled || !audioCtx || !tickBuffer) return;
+  if (!audioCtx || !tickBuffer) return;
   const src = audioCtx.createBufferSource();
   src.buffer = tickBuffer;
   src.playbackRate.value = tickToggle ? 0.85 : 1.15;
@@ -332,7 +231,6 @@ function playTick() {
   src.start();
 }
 
-// автоактивация звука при любом первом клике/тапе
 async function unlockAudio() {
   await loadTick();
   if (audioCtx && audioCtx.state === 'suspended') {
@@ -344,15 +242,7 @@ document.addEventListener('click', unlockAudio, { once: true });
 document.addEventListener('keydown', unlockAudio, { once: true });
 document.addEventListener('touchstart', unlockAudio, { once: true });
 
-// сразу пробуем загрузить (звук активируется при первом действии)
 loadTick();
-
-const soundBtn = document.getElementById('soundBtn');
-soundBtn.addEventListener('click', async () => {
-  await unlockAudio();
-  soundEnabled = !soundEnabled;
-  soundBtn.textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
-});
 
 // ========== ТАЙМЕР ==========
 const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
