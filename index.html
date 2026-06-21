@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Countdown</title>
+
+<!-- FNAF-подобный шрифт -->
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Glitch&family=Rubik+Wet+Paint&family=Rubik+Beastly&display=swap" rel="stylesheet">
+
 <style>
 * {
   margin: 0;
@@ -18,8 +22,8 @@ html, body {
 }
 
 body {
-  color: #fff;
-  font-family: monospace;
+  color: #cce8ff;
+  font-family: 'Rubik Beastly', monospace;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,14 +34,21 @@ body {
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 50px;
   font-weight: 400;
-  letter-spacing: 5px;
+  letter-spacing: 6px;
   text-transform: uppercase;
   transition: opacity 1s ease;
   position: relative;
   z-index: 10;
+  color: #d4ecff;
+  text-shadow: 
+    2px 2px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    0 0 20px rgba(180, 220, 255, 0.4);
 }
 
 .countdown {
@@ -56,14 +67,27 @@ h1 {
 }
 
 .number {
-  font-size: 5rem;
-  font-weight: 700;
-  min-width: 130px;
+  font-size: 6rem;
+  font-weight: 400;
+  min-width: 150px;
   text-align: center;
   line-height: 1.2;
   position: relative;
   transition: font-size 1s ease;
+  color: #d4ecff;
+  text-shadow: 
+    3px 3px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    0 0 30px rgba(180, 220, 255, 0.5);
 }
+
+/* у разных цифр чуть разный наклон — рваный вид */
+.unit:nth-child(1) .number { transform: rotate(-1.5deg) skewX(-2deg); }
+.unit:nth-child(2) .number { transform: rotate(0.8deg)  skewX(1.5deg); }
+.unit:nth-child(3) .number { transform: rotate(-0.6deg) skewX(-1deg); }
+.unit:nth-child(4) .number { transform: rotate(1.2deg)  skewX(2deg); }
 
 .number .current {
   display: inline-block;
@@ -76,16 +100,18 @@ h1 {
 
 @keyframes pulse-tick {
   0%   { transform: scale(1.45); color: #ff3030; }
-  100% { transform: scale(1);    color: #ffffff; }
+  100% { transform: scale(1);    color: #d4ecff; }
 }
 
 .label {
-  font-size: 0.8rem;
-  letter-spacing: 3px;
+  font-family: 'Rubik Beastly', monospace;
+  font-size: 0.9rem;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  margin-top: 10px;
-  opacity: 0.5;
-  transition: opacity 1s ease;
+  margin-top: 14px;
+  opacity: 0.6;
+  color: #aaccdd;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -96,14 +122,14 @@ h1 {
 }
 
 .final-mode .countdown { gap: 0; }
-.final-mode #seconds { font-size: 14rem; overflow: visible; }
+.final-mode #seconds { font-size: 16rem; overflow: visible; transform: rotate(-1deg); }
 .final-mode #sec-label { opacity: 0; }
 
 .beat { animation: beat 0.8s cubic-bezier(0.0, 0.0, 0.2, 1) forwards; }
 
 @keyframes beat {
   0%   { transform: scale(1.5); color: #ff0000; }
-  100% { transform: scale(1); color: #ffffff; }
+  100% { transform: scale(1); color: #d4ecff; }
 }
 
 .glitch-zero {
@@ -154,23 +180,25 @@ h1 {
 .end-text {
   position: fixed;
   top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 3.5rem;
-  font-family: monospace;
+  transform: translate(-50%, -50%) rotate(-2deg);
+  font-family: 'Rubik Beastly', monospace;
+  font-size: 4rem;
   letter-spacing: 10px;
   text-transform: uppercase;
   opacity: 0;
   animation: fade-in 3s ease-out 2.5s forwards;
   z-index: 100;
+  color: #d4ecff;
+  text-shadow: 3px 3px 0 #000, 0 0 30px rgba(180,220,255,0.5);
 }
 
 @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
 
 @media (max-width: 600px) {
   .countdown { gap: 20px; }
-  .number { font-size: 2.5rem; min-width: 65px; }
+  .number { font-size: 3rem; min-width: 70px; }
   .final-mode #seconds { font-size: 7rem; }
-  h1 { font-size: 1.2rem; margin-bottom: 30px; }
+  h1 { font-size: 1.5rem; margin-bottom: 30px; }
 }
 </style>
 </head>
@@ -205,17 +233,13 @@ let tickToggle = false;
 
 async function loadTick() {
   try {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (!tickBuffer) {
       const resp = await fetch('tick.wav');
       const arr = await resp.arrayBuffer();
       tickBuffer = await audioCtx.decodeAudioData(arr);
     }
-  } catch (e) {
-    console.log('Не загрузился tick.wav', e);
-  }
+  } catch (e) { console.log(e); }
 }
 
 function playTick() {
@@ -233,15 +257,12 @@ function playTick() {
 
 async function unlockAudio() {
   await loadTick();
-  if (audioCtx && audioCtx.state === 'suspended') {
-    await audioCtx.resume();
-  }
+  if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
 }
 
 document.addEventListener('click', unlockAudio, { once: true });
 document.addEventListener('keydown', unlockAudio, { once: true });
 document.addEventListener('touchstart', unlockAudio, { once: true });
-
 loadTick();
 
 // ========== ТАЙМЕР ==========
@@ -290,26 +311,21 @@ function enterFinalMode() {
 function doEnd() {
   if (ended) return;
   ended = true;
-
   const secEl = document.getElementById('seconds');
   secEl.innerHTML = '';
-
   const zero = document.createElement('span');
   zero.className = 'current';
   zero.textContent = '0';
   zero.style.color = '#ff0000';
   zero.style.position = 'relative';
   secEl.appendChild(zero);
-
   zero.classList.add('glitch-zero');
-
   setTimeout(() => {
     zero.classList.remove('glitch-zero');
-    zero.style.color = '#fff';
+    zero.style.color = '#d4ecff';
     void zero.offsetWidth;
     zero.classList.add('physics-fall');
   }, 700);
-
   setTimeout(() => {
     document.getElementById('countdown').style.display = 'none';
     const endText = document.createElement('div');
@@ -321,32 +337,24 @@ function doEnd() {
 
 function update() {
   if (ended) return;
-
   let diff = target - Date.now();
   if (diff <= 0) { doEnd(); return; }
-
   const totalSeconds = Math.ceil(diff / 1000);
-
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
-
   if (totalSeconds <= 10) enterFinalMode();
-
   const now = {
     days: pad(d),
     hours: pad(h),
     minutes: pad(m),
     seconds: finalMode ? String(s) : pad(s)
   };
-
   let secondsChanged = false;
-
   for (const key in now) {
     if (now[key] !== prev[key]) {
       if (key === 'seconds' && prev[key] !== undefined) secondsChanged = true;
-
       if (finalMode && key === 'seconds') {
         setNumberBeat(containers[key], now[key]);
       } else if (prev[key] !== undefined) {
@@ -358,7 +366,6 @@ function update() {
       prev[key] = now[key];
     }
   }
-
   if (secondsChanged && initialized) playTick();
   if (!initialized) initialized = true;
 }
