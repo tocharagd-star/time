@@ -18,7 +18,6 @@ html, body {
 }
 
 body {
-  background: #1a1a1a;
   color: #fff;
   font-family: monospace;
   display: flex;
@@ -29,43 +28,171 @@ body {
   position: relative;
 }
 
+/* небо заката */
 .sky {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
-    radial-gradient(ellipse at 20% 30%, rgba(60,60,70,0.5) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(40,40,50,0.6) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(50,50,60,0.4) 0%, transparent 60%),
-    linear-gradient(180deg, #1a1a1f 0%, #2a2a32 50%, #1a1a1f 100%);
+  background: linear-gradient(
+    180deg,
+    #1a1448 0%,
+    #3d1f6b 15%,
+    #7a2a6e 35%,
+    #c94a4a 55%,
+    #f08545 70%,
+    #f5b15c 82%,
+    #3a2030 95%,
+    #1a0f1a 100%
+  );
   z-index: 0;
 }
 
-.lightning-flash {
+/* солнце */
+.sun {
   position: fixed;
-  top: 0;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    #fff7d6 0%,
+    #ffe48a 25%,
+    #ffb04a 55%,
+    #ff7a30 80%,
+    #ff5520 100%);
+  box-shadow:
+    0 0 60px 20px rgba(255, 180, 80, 0.7),
+    0 0 120px 50px rgba(255, 130, 60, 0.5),
+    0 0 200px 80px rgba(255, 90, 40, 0.35),
+    0 0 350px 120px rgba(255, 70, 30, 0.2);
+  z-index: 1;
+  animation: sun-pulse 6s ease-in-out infinite;
+}
+
+@keyframes sun-pulse {
+  0%, 100% { 
+    box-shadow:
+      0 0 60px 20px rgba(255, 180, 80, 0.7),
+      0 0 120px 50px rgba(255, 130, 60, 0.5),
+      0 0 200px 80px rgba(255, 90, 40, 0.35),
+      0 0 350px 120px rgba(255, 70, 30, 0.2);
+  }
+  50% { 
+    box-shadow:
+      0 0 80px 30px rgba(255, 200, 100, 0.8),
+      0 0 150px 70px rgba(255, 150, 70, 0.6),
+      0 0 250px 100px rgba(255, 100, 50, 0.4),
+      0 0 400px 150px rgba(255, 80, 40, 0.25);
+  }
+}
+
+/* отражение/блики на горизонте */
+.horizon-glow {
+  position: fixed;
   left: 0;
+  bottom: 0;
   width: 100%;
-  height: 100%;
-  background: #fff;
-  opacity: 0;
+  height: 30%;
+  background: radial-gradient(ellipse at center bottom,
+    rgba(255, 180, 100, 0.6) 0%,
+    rgba(255, 100, 50, 0.3) 30%,
+    transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* облака */
+.cloud {
+  position: fixed;
+  background: linear-gradient(90deg, 
+    rgba(40, 20, 40, 0.8) 0%,
+    rgba(80, 40, 50, 0.7) 50%,
+    rgba(40, 20, 40, 0.8) 100%);
+  border-radius: 50px;
   z-index: 2;
   pointer-events: none;
-  mix-blend-mode: screen;
+  filter: blur(8px);
 }
 
-#storm-canvas {
+.cloud-1 {
+  width: 400px;
+  height: 50px;
+  top: 30%;
+  left: -100px;
+  animation: drift1 80s linear infinite;
+}
+
+.cloud-2 {
+  width: 600px;
+  height: 70px;
+  top: 45%;
+  left: -200px;
+  animation: drift2 120s linear infinite;
+  background: linear-gradient(90deg,
+    rgba(60, 25, 30, 0.7) 0%,
+    rgba(120, 50, 40, 0.6) 50%,
+    rgba(60, 25, 30, 0.7) 100%);
+}
+
+.cloud-3 {
+  width: 300px;
+  height: 40px;
+  top: 20%;
+  left: -100px;
+  animation: drift3 100s linear infinite;
+}
+
+.cloud-4 {
+  width: 500px;
+  height: 60px;
+  top: 55%;
+  left: -200px;
+  animation: drift1 150s linear infinite;
+  background: linear-gradient(90deg,
+    rgba(30, 15, 25, 0.85) 0%,
+    rgba(70, 35, 45, 0.75) 50%,
+    rgba(30, 15, 25, 0.85) 100%);
+}
+
+@keyframes drift1 {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 200px)); }
+}
+
+@keyframes drift2 {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 400px)); }
+}
+
+@keyframes drift3 {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 200px)); }
+}
+
+/* птицы силуэты */
+.bird {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 3;
-  pointer-events: none;
+  font-size: 20px;
+  color: rgba(0,0,0,0.6);
+  z-index: 2;
+  animation: bird-fly 30s linear infinite;
 }
 
+.bird-1 { top: 25%; animation-delay: 0s; }
+.bird-2 { top: 28%; animation-delay: -5s; animation-duration: 35s; }
+.bird-3 { top: 22%; animation-delay: -15s; animation-duration: 40s; }
+
+@keyframes bird-fly {
+  0%   { left: -50px; transform: translateY(0); }
+  50%  { transform: translateY(-20px); }
+  100% { left: calc(100% + 50px); transform: translateY(0); }
+}
+
+/* контент */
 h1 {
   font-size: 2rem;
   margin-bottom: 50px;
@@ -75,7 +202,7 @@ h1 {
   transition: opacity 1s ease;
   position: relative;
   z-index: 10;
-  text-shadow: 0 0 20px rgba(0,0,0,0.8);
+  text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.6);
 }
 
 .countdown {
@@ -103,7 +230,7 @@ h1 {
   overflow: hidden;
   position: relative;
   transition: font-size 1s ease;
-  text-shadow: 0 0 20px rgba(0,0,0,0.8);
+  text-shadow: 0 0 20px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.7);
 }
 
 .number .old,
@@ -137,9 +264,9 @@ h1 {
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-top: 10px;
-  opacity: 0.5;
+  opacity: 0.7;
   transition: opacity 1s ease;
-  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+  text-shadow: 0 0 10px rgba(0,0,0,0.9);
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -249,14 +376,24 @@ h1 {
   .number { font-size: 2.5rem; min-width: 65px; }
   .final-mode #seconds { font-size: 7rem; }
   h1 { font-size: 1.2rem; margin-bottom: 30px; }
+  .sun { width: 180px; height: 180px; }
 }
 </style>
 </head>
 <body>
 
 <div class="sky"></div>
-<canvas id="storm-canvas"></canvas>
-<div class="lightning-flash" id="flash"></div>
+<div class="horizon-glow"></div>
+<div class="sun"></div>
+
+<div class="cloud cloud-1"></div>
+<div class="cloud cloud-2"></div>
+<div class="cloud cloud-3"></div>
+<div class="cloud cloud-4"></div>
+
+<div class="bird bird-1">~</div>
+<div class="bird bird-2">~</div>
+<div class="bird bird-3">~</div>
 
 <h1 id="title">days left</h1>
 
@@ -280,7 +417,6 @@ h1 {
 </div>
 
 <script>
-// ============ ТАЙМЕР ============
 const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
 
 const containers = {
@@ -410,214 +546,6 @@ function update() {
 
 update();
 setInterval(update, 1000);
-
-// ============ ГРОЗА ============
-const canvas = document.getElementById('storm-canvas');
-const ctx = canvas.getContext('2d');
-const flash = document.getElementById('flash');
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// === ДОЖДЬ ===
-const raindrops = [];
-const RAIN_COUNT = 250;
-
-for (let i = 0; i < RAIN_COUNT; i++) {
-  raindrops.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    length: 10 + Math.random() * 15,
-    speed: 8 + Math.random() * 7,
-    opacity: 0.2 + Math.random() * 0.4
-  });
-}
-
-// === МОЛНИИ ===
-function makeLightning() {
-  const startX = Math.random() * canvas.width;
-  const segments = [{x: startX, y: 0}];
-  const branches = [];
-  let x = startX;
-  let y = 0;
-  const endY = canvas.height * (0.6 + Math.random() * 0.3);
-
-  while (y < endY) {
-    y += 15 + Math.random() * 25;
-    x += (Math.random() - 0.5) * 60;
-    segments.push({x, y});
-
-    // ответвление
-    if (Math.random() < 0.35 && segments.length > 2) {
-      const branch = [{x, y}];
-      let bx = x, by = y;
-      const blen = 4 + Math.floor(Math.random() * 5);
-      const bdir = (Math.random() - 0.5) * 2;
-      for (let i = 0; i < blen; i++) {
-        by += 8 + Math.random() * 18;
-        bx += bdir * (5 + Math.random() * 15) + (Math.random() - 0.5) * 20;
-        branch.push({x: bx, y: by});
-      }
-      branches.push(branch);
-    }
-  }
-
-  return {segments, life: 1, branches, frame: 0};
-}
-
-let activeLightning = null;
-let lightningTimer = 0;
-let nextLightning = 60; // первая молния через 1 секунду
-
-function triggerLightning() {
-  activeLightning = makeLightning();
-
-  // основная вспышка
-  flash.style.transition = 'none';
-  flash.style.opacity = '0.85';
-  setTimeout(() => {
-    flash.style.transition = 'opacity 0.2s ease-out';
-    flash.style.opacity = '0';
-  }, 60);
-
-  // вторая вспышка
-  setTimeout(() => {
-    flash.style.transition = 'none';
-    flash.style.opacity = '0.5';
-    setTimeout(() => {
-      flash.style.transition = 'opacity 0.35s ease-out';
-      flash.style.opacity = '0';
-    }, 50);
-  }, 220);
-}
-
-function drawLightning(l) {
-  // ШИРОКОЕ СВЕЧЕНИЕ (внешний glow)
-  ctx.save();
-  ctx.strokeStyle = `rgba(150, 180, 255, ${l.life * 0.4})`;
-  ctx.lineWidth = 18;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(l.segments[0].x, l.segments[0].y);
-  for (let i = 1; i < l.segments.length; i++) {
-    ctx.lineTo(l.segments[i].x, l.segments[i].y);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  // СРЕДНЕЕ СВЕЧЕНИЕ
-  ctx.save();
-  ctx.strokeStyle = `rgba(200, 220, 255, ${l.life * 0.7})`;
-  ctx.lineWidth = 8;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(l.segments[0].x, l.segments[0].y);
-  for (let i = 1; i < l.segments.length; i++) {
-    ctx.lineTo(l.segments[i].x, l.segments[i].y);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  // ЯДРО (яркое белое)
-  ctx.save();
-  ctx.strokeStyle = `rgba(255, 255, 255, ${l.life})`;
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(l.segments[0].x, l.segments[0].y);
-  for (let i = 1; i < l.segments.length; i++) {
-    ctx.lineTo(l.segments[i].x, l.segments[i].y);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  // ОТВЕТВЛЕНИЯ — свечение
-  ctx.save();
-  ctx.strokeStyle = `rgba(180, 200, 255, ${l.life * 0.5})`;
-  ctx.lineWidth = 6;
-  ctx.lineCap = 'round';
-  l.branches.forEach(br => {
-    ctx.beginPath();
-    ctx.moveTo(br[0].x, br[0].y);
-    for (let i = 1; i < br.length; i++) {
-      ctx.lineTo(br[i].x, br[i].y);
-    }
-    ctx.stroke();
-  });
-  ctx.restore();
-
-  // ОТВЕТВЛЕНИЯ — ядро
-  ctx.save();
-  ctx.strokeStyle = `rgba(255, 255, 255, ${l.life * 0.9})`;
-  ctx.lineWidth = 1.5;
-  ctx.lineCap = 'round';
-  l.branches.forEach(br => {
-    ctx.beginPath();
-    ctx.moveTo(br[0].x, br[0].y);
-    for (let i = 1; i < br.length; i++) {
-      ctx.lineTo(br[i].x, br[i].y);
-    }
-    ctx.stroke();
-  });
-  ctx.restore();
-}
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // дождь
-  ctx.strokeStyle = 'rgba(180, 200, 220, 0.4)';
-  ctx.lineWidth = 1;
-  for (const drop of raindrops) {
-    ctx.globalAlpha = drop.opacity;
-    ctx.beginPath();
-    ctx.moveTo(drop.x, drop.y);
-    ctx.lineTo(drop.x - 2, drop.y + drop.length);
-    ctx.stroke();
-
-    drop.y += drop.speed;
-    drop.x -= 2;
-
-    if (drop.y > canvas.height) {
-      drop.y = -20;
-      drop.x = Math.random() * canvas.width + 100;
-    }
-    if (drop.x < 0) drop.x = canvas.width;
-  }
-  ctx.globalAlpha = 1;
-
-  // молния — держится дольше
-  if (activeLightning) {
-    activeLightning.frame++;
-    // первые 8 кадров — яркая, потом плавно гаснет
-    if (activeLightning.frame < 8) {
-      activeLightning.life = 1;
-    } else {
-      activeLightning.life -= 0.04;
-    }
-    drawLightning(activeLightning);
-    if (activeLightning.life <= 0) activeLightning = null;
-  }
-
-  // таймер молний
-  lightningTimer++;
-  if (lightningTimer >= nextLightning) {
-    triggerLightning();
-    lightningTimer = 0;
-    nextLightning = 100 + Math.random() * 250;
-  }
-
-  requestAnimationFrame(animate);
-}
-
-animate();
 </script>
 
 </body>
