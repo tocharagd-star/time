@@ -26,9 +26,10 @@ body {
   justify-content: center;
   min-height: 100vh;
   position: relative;
+  background: #1a0f1a;
 }
 
-/* небо заката */
+/* небо заката — плавный градиент без полос */
 .sky {
   position: fixed;
   top: 0;
@@ -37,159 +38,266 @@ body {
   height: 100%;
   background: linear-gradient(
     180deg,
-    #1a1448 0%,
-    #3d1f6b 15%,
-    #7a2a6e 35%,
-    #c94a4a 55%,
-    #f08545 70%,
-    #f5b15c 82%,
-    #3a2030 95%,
-    #1a0f1a 100%
+    #0a0820 0%,
+    #1a1040 12%,
+    #3d1d5e 28%,
+    #6b2858 42%,
+    #a83a52 55%,
+    #d85a3e 67%,
+    #e8843e 76%,
+    #f0a548 83%,
+    #c66838 90%,
+    #4a2030 96%,
+    #15080f 100%
   );
   z-index: 0;
 }
 
+/* шум против бандинга */
+.sky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.015) 1px, transparent 0);
+  background-size: 3px 3px;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* атмосферная дымка для плавности */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255, 140, 70, 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 120% 40% at 50% 90%, rgba(255, 100, 60, 0.2) 0%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* солнце */
-.sun {
+.sun-wrap {
   position: fixed;
   left: 50%;
-  bottom: 8%;
+  bottom: 5%;
   transform: translateX(-50%);
-  width: 280px;
-  height: 280px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sun {
+  width: 260px;
+  height: 260px;
   border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%,
+    #fffaea 0%,
+    #ffeeb0 20%,
+    #ffc870 45%,
+    #ff924a 70%,
+    #ff6030 90%,
+    rgba(255, 70, 30, 0) 100%);
+  position: relative;
+  animation: sun-pulse 5s ease-in-out infinite;
+}
+
+/* большое ореол свечение через radial */
+.sun-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1200px;
+  height: 1200px;
   background: radial-gradient(circle at center,
-    #fff7d6 0%,
-    #ffe48a 25%,
-    #ffb04a 55%,
-    #ff7a30 80%,
-    #ff5520 100%);
-  box-shadow:
-    0 0 60px 20px rgba(255, 180, 80, 0.7),
-    0 0 120px 50px rgba(255, 130, 60, 0.5),
-    0 0 200px 80px rgba(255, 90, 40, 0.35),
-    0 0 350px 120px rgba(255, 70, 30, 0.2);
-  z-index: 1;
-  animation: sun-pulse 6s ease-in-out infinite;
+    rgba(255, 180, 90, 0.55) 0%,
+    rgba(255, 140, 70, 0.3) 18%,
+    rgba(255, 100, 60, 0.18) 32%,
+    rgba(255, 80, 50, 0.08) 50%,
+    transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: glow-pulse 5s ease-in-out infinite;
 }
 
 @keyframes sun-pulse {
-  0%, 100% { 
-    box-shadow:
-      0 0 60px 20px rgba(255, 180, 80, 0.7),
-      0 0 120px 50px rgba(255, 130, 60, 0.5),
-      0 0 200px 80px rgba(255, 90, 40, 0.35),
-      0 0 350px 120px rgba(255, 70, 30, 0.2);
-  }
-  50% { 
-    box-shadow:
-      0 0 80px 30px rgba(255, 200, 100, 0.8),
-      0 0 150px 70px rgba(255, 150, 70, 0.6),
-      0 0 250px 100px rgba(255, 100, 50, 0.4),
-      0 0 400px 150px rgba(255, 80, 40, 0.25);
-  }
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50%      { transform: scale(1.03); filter: brightness(1.1); }
 }
 
-/* отражение/блики на горизонте */
-.horizon-glow {
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* дальние горы силуэт */
+.mountains {
   position: fixed;
-  left: 0;
   bottom: 0;
+  left: 0;
   width: 100%;
-  height: 30%;
-  background: radial-gradient(ellipse at center bottom,
-    rgba(255, 180, 100, 0.6) 0%,
-    rgba(255, 100, 50, 0.3) 30%,
-    transparent 70%);
-  z-index: 1;
+  height: 18%;
+  background: linear-gradient(180deg, transparent 0%, rgba(20, 8, 15, 0.6) 60%, rgba(15, 5, 12, 0.95) 100%);
+  z-index: 3;
   pointer-events: none;
 }
 
-/* облака */
+.mountains svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* облака — мягкие радиальные градиенты, не полосы */
 .cloud {
   position: fixed;
-  background: linear-gradient(90deg, 
-    rgba(40, 20, 40, 0.8) 0%,
-    rgba(80, 40, 50, 0.7) 50%,
-    rgba(40, 20, 40, 0.8) 100%);
-  border-radius: 50px;
-  z-index: 2;
+  border-radius: 50%;
   pointer-events: none;
-  filter: blur(8px);
+  z-index: 4;
+  filter: blur(12px);
+  opacity: 0.85;
 }
 
 .cloud-1 {
-  width: 400px;
-  height: 50px;
-  top: 30%;
-  left: -100px;
-  animation: drift1 80s linear infinite;
+  width: 500px;
+  height: 80px;
+  top: 28%;
+  left: -200px;
+  background: radial-gradient(ellipse at center,
+    rgba(80, 30, 40, 0.7) 0%,
+    rgba(60, 20, 35, 0.5) 40%,
+    transparent 75%);
+  animation: drift1 90s linear infinite;
 }
 
 .cloud-2 {
-  width: 600px;
-  height: 70px;
-  top: 45%;
-  left: -200px;
-  animation: drift2 120s linear infinite;
-  background: linear-gradient(90deg,
-    rgba(60, 25, 30, 0.7) 0%,
-    rgba(120, 50, 40, 0.6) 50%,
-    rgba(60, 25, 30, 0.7) 100%);
+  width: 700px;
+  height: 100px;
+  top: 42%;
+  left: -300px;
+  background: radial-gradient(ellipse at center,
+    rgba(140, 60, 50, 0.55) 0%,
+    rgba(90, 40, 45, 0.35) 45%,
+    transparent 75%);
+  animation: drift2 130s linear infinite;
 }
 
 .cloud-3 {
-  width: 300px;
-  height: 40px;
-  top: 20%;
-  left: -100px;
-  animation: drift3 100s linear infinite;
+  width: 400px;
+  height: 60px;
+  top: 18%;
+  left: -150px;
+  background: radial-gradient(ellipse at center,
+    rgba(50, 25, 50, 0.6) 0%,
+    rgba(40, 20, 40, 0.4) 45%,
+    transparent 75%);
+  animation: drift3 110s linear infinite;
 }
 
 .cloud-4 {
-  width: 500px;
-  height: 60px;
-  top: 55%;
-  left: -200px;
-  animation: drift1 150s linear infinite;
-  background: linear-gradient(90deg,
-    rgba(30, 15, 25, 0.85) 0%,
-    rgba(70, 35, 45, 0.75) 50%,
-    rgba(30, 15, 25, 0.85) 100%);
+  width: 600px;
+  height: 90px;
+  top: 52%;
+  left: -250px;
+  background: radial-gradient(ellipse at center,
+    rgba(30, 15, 25, 0.7) 0%,
+    rgba(50, 25, 35, 0.45) 45%,
+    transparent 75%);
+  animation: drift1 160s linear infinite;
+}
+
+.cloud-5 {
+  width: 350px;
+  height: 50px;
+  top: 10%;
+  left: -100px;
+  background: radial-gradient(ellipse at center,
+    rgba(40, 20, 50, 0.55) 0%,
+    transparent 70%);
+  animation: drift2 200s linear infinite;
 }
 
 @keyframes drift1 {
   0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 200px)); }
+  100% { transform: translateX(calc(100vw + 400px)); }
 }
 
 @keyframes drift2 {
   0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 400px)); }
+  100% { transform: translateX(calc(100vw + 500px)); }
 }
 
 @keyframes drift3 {
   0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 200px)); }
+  100% { transform: translateX(calc(100vw + 300px)); }
 }
 
-/* птицы силуэты */
-.bird {
+/* звёзды наверху */
+.stars {
   position: fixed;
-  font-size: 20px;
-  color: rgba(0,0,0,0.6);
-  z-index: 2;
-  animation: bird-fly 30s linear infinite;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.8; }
+}
+
+/* птицы */
+.birds {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.bird {
+  position: absolute;
+  width: 16px;
+  height: 8px;
+  animation: bird-fly 40s linear infinite;
+}
+
+.bird::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 25% 50%, rgba(15,5,15,0.85) 0%, transparent 40%),
+    radial-gradient(circle at 75% 50%, rgba(15,5,15,0.85) 0%, transparent 40%);
+  animation: wing-flap 0.6s ease-in-out infinite;
 }
 
 .bird-1 { top: 25%; animation-delay: 0s; }
-.bird-2 { top: 28%; animation-delay: -5s; animation-duration: 35s; }
-.bird-3 { top: 22%; animation-delay: -15s; animation-duration: 40s; }
+.bird-2 { top: 28%; left: -50px; animation-delay: -10s; animation-duration: 50s; }
+.bird-3 { top: 22%; left: -50px; animation-delay: -25s; animation-duration: 60s; }
 
 @keyframes bird-fly {
-  0%   { left: -50px; transform: translateY(0); }
-  50%  { transform: translateY(-20px); }
-  100% { left: calc(100% + 50px); transform: translateY(0); }
+  0%   { left: -30px; transform: translateY(0); }
+  25%  { transform: translateY(-15px); }
+  50%  { transform: translateY(5px); }
+  75%  { transform: translateY(-10px); }
+  100% { left: calc(100% + 30px); transform: translateY(0); }
+}
+
+@keyframes wing-flap {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.5); }
 }
 
 /* контент */
@@ -202,7 +310,7 @@ h1 {
   transition: opacity 1s ease;
   position: relative;
   z-index: 10;
-  text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.5);
 }
 
 .countdown {
@@ -230,7 +338,7 @@ h1 {
   overflow: hidden;
   position: relative;
   transition: font-size 1s ease;
-  text-shadow: 0 0 20px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.7);
+  text-shadow: 0 2px 20px rgba(0,0,0,0.95), 0 0 40px rgba(0,0,0,0.6);
 }
 
 .number .old,
@@ -241,10 +349,7 @@ h1 {
   left: 0;
 }
 
-.number .current {
-  display: block;
-  position: relative;
-}
+.number .current { display: block; position: relative; }
 
 .number .old { animation: fall-out 0.4s ease-in forwards; }
 .number .new { animation: rise-in 0.4s ease-out forwards; }
@@ -264,9 +369,9 @@ h1 {
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-top: 10px;
-  opacity: 0.7;
+  opacity: 0.75;
   transition: opacity 1s ease;
-  text-shadow: 0 0 10px rgba(0,0,0,0.9);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.9);
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -340,9 +445,7 @@ h1 {
   100% { transform: translate(0, 0); opacity: 0; }
 }
 
-.physics-fall {
-  animation: physics-fall 3s forwards;
-}
+.physics-fall { animation: physics-fall 3s forwards; }
 
 @keyframes physics-fall {
   0%    { transform: translateY(0) rotate(0deg); opacity: 1; }
@@ -377,23 +480,39 @@ h1 {
   .final-mode #seconds { font-size: 7rem; }
   h1 { font-size: 1.2rem; margin-bottom: 30px; }
   .sun { width: 180px; height: 180px; }
+  .sun-glow { width: 800px; height: 800px; }
 }
 </style>
 </head>
 <body>
 
 <div class="sky"></div>
-<div class="horizon-glow"></div>
-<div class="sun"></div>
+<div class="stars" id="stars"></div>
+<div class="atmosphere"></div>
 
+<div class="sun-wrap">
+  <div class="sun-glow"></div>
+  <div class="sun"></div>
+</div>
+
+<div class="cloud cloud-5"></div>
+<div class="cloud cloud-3"></div>
 <div class="cloud cloud-1"></div>
 <div class="cloud cloud-2"></div>
-<div class="cloud cloud-3"></div>
 <div class="cloud cloud-4"></div>
 
-<div class="bird bird-1">~</div>
-<div class="bird bird-2">~</div>
-<div class="bird bird-3">~</div>
+<div class="mountains">
+  <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+    <path d="M0,200 L0,140 L80,100 L160,130 L240,80 L340,110 L420,70 L520,120 L620,90 L720,130 L820,100 L920,140 L1020,110 L1120,150 L1200,120 L1200,200 Z" fill="#0a0508" opacity="0.95"/>
+    <path d="M0,200 L0,170 L100,150 L200,165 L320,140 L430,160 L540,135 L650,165 L760,145 L880,170 L1000,150 L1100,175 L1200,155 L1200,200 Z" fill="#1a0a15" opacity="0.9"/>
+  </svg>
+</div>
+
+<div class="birds">
+  <div class="bird bird-1"></div>
+  <div class="bird bird-2"></div>
+  <div class="bird bird-3"></div>
+</div>
 
 <h1 id="title">days left</h1>
 
@@ -417,6 +536,20 @@ h1 {
 </div>
 
 <script>
+// генерация звёзд
+const starsContainer = document.getElementById('stars');
+for (let i = 0; i < 60; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.left = Math.random() * 100 + '%';
+  s.style.top = Math.random() * 100 + '%';
+  s.style.animationDelay = (Math.random() * 4) + 's';
+  s.style.animationDuration = (3 + Math.random() * 3) + 's';
+  s.style.width = s.style.height = (1 + Math.random() * 1.5) + 'px';
+  starsContainer.appendChild(s);
+}
+
+// ============ ТАЙМЕР ============
 const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
 
 const containers = {
