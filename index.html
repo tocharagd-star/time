@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Countdown</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sigmar&display=swap" rel="stylesheet">
+
 <style>
 * {
   margin: 0;
@@ -18,8 +23,8 @@ html, body {
 }
 
 body {
-  color: #fff;
-  font-family: monospace;
+  color: #cce8ff;
+  font-family: 'Sigmar', cursive;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,20 +34,21 @@ body {
   background: #000;
 }
 
+/* каждая буква/цифра наклонена случайно — FNAF стиль */
+.ch {
+  display: inline-block;
+}
+
 h1 {
-  font-size: 2rem;
+  font-size: 3rem;
   margin-bottom: 50px;
-  font-weight: 700;
-  letter-spacing: 5px;
+  font-weight: 400;
+  letter-spacing: 8px;
   text-transform: uppercase;
   transition: opacity 1s ease;
   position: relative;
   z-index: 10;
-}
-
-/* контейнер для деформированных букв */
-h1 .ch, .number .current .ch {
-  display: inline-block;
+  color: #d4ecff;
 }
 
 .countdown {
@@ -61,13 +67,14 @@ h1 .ch, .number .current .ch {
 }
 
 .number {
-  font-size: 5rem;
-  font-weight: 900;
-  min-width: 130px;
+  font-size: 6.5rem;
+  font-weight: 400;
+  min-width: 160px;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.1;
   position: relative;
   transition: font-size 1s ease;
+  color: #d4ecff;
 }
 
 .number .current {
@@ -81,16 +88,17 @@ h1 .ch, .number .current .ch {
 
 @keyframes pulse-tick {
   0%   { transform: scale(1.45); color: #ff3030; }
-  100% { transform: scale(1);    color: #ffffff; }
+  100% { transform: scale(1);    color: #d4ecff; }
 }
 
 .label {
-  font-size: 0.8rem;
-  letter-spacing: 3px;
+  font-family: 'Sigmar', cursive;
+  font-size: 1rem;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  margin-top: 10px;
-  opacity: 0.5;
-  transition: opacity 1s ease;
+  margin-top: 14px;
+  opacity: 0.6;
+  color: #a8c8dc;
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -101,14 +109,14 @@ h1 .ch, .number .current .ch {
 }
 
 .final-mode .countdown { gap: 0; }
-.final-mode #seconds { font-size: 14rem; overflow: visible; }
+.final-mode #seconds { font-size: 17rem; overflow: visible; }
 .final-mode #sec-label { opacity: 0; }
 
 .beat { animation: beat 0.8s cubic-bezier(0.0, 0.0, 0.2, 1) forwards; }
 
 @keyframes beat {
   0%   { transform: scale(1.5); color: #ff0000; }
-  100% { transform: scale(1); color: #ffffff; }
+  100% { transform: scale(1); color: #d4ecff; }
 }
 
 .glitch-zero {
@@ -160,23 +168,23 @@ h1 .ch, .number .current .ch {
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 3.5rem;
-  font-family: monospace;
-  font-weight: 900;
-  letter-spacing: 10px;
+  font-family: 'Sigmar', cursive;
+  font-size: 5rem;
+  letter-spacing: 12px;
   text-transform: uppercase;
   opacity: 0;
   animation: fade-in 3s ease-out 2.5s forwards;
   z-index: 100;
+  color: #d4ecff;
 }
 
 @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
 
 @media (max-width: 600px) {
   .countdown { gap: 20px; }
-  .number { font-size: 2.5rem; min-width: 65px; }
+  .number { font-size: 3rem; min-width: 75px; }
   .final-mode #seconds { font-size: 7rem; }
-  h1 { font-size: 1.2rem; margin-bottom: 30px; }
+  h1 { font-size: 1.6rem; margin-bottom: 30px; }
 }
 </style>
 </head>
@@ -204,8 +212,7 @@ h1 .ch, .number .current .ch {
 </div>
 
 <script>
-// ========== ДЕФОРМАЦИЯ КАЖДОЙ БУКВЫ/ЦИФРЫ ==========
-// Каждый символ получает случайный наклон, поворот, размер — FNAF-стиль
+// каждая буква под небольшим случайным углом — FNAF-стиль
 function deformText(element) {
   const text = element.textContent;
   element.textContent = '';
@@ -213,30 +220,14 @@ function deformText(element) {
     const span = document.createElement('span');
     span.className = 'ch';
     span.textContent = ch === ' ' ? '\u00A0' : ch;
-
-    // случайные искажения
-    const rot     = (Math.random() - 0.5) * 16;       // -8..+8 градусов
-    const skewX   = (Math.random() - 0.5) * 14;       // -7..+7
-    const skewY   = (Math.random() - 0.5) * 10;       // -5..+5
-    const scaleX  = 0.85 + Math.random() * 0.35;      // 0.85..1.2
-    const scaleY  = 0.9  + Math.random() * 0.3;       // 0.9..1.2
-    const transY  = (Math.random() - 0.5) * 8;        // -4..+4 px
-
-    span.style.display = 'inline-block';
-    span.style.transform = 
-      `translateY(${transY}px) rotate(${rot}deg) skew(${skewX}deg, ${skewY}deg) scale(${scaleX}, ${scaleY})`;
-
+    const rot = (Math.random() - 0.5) * 12;
+    const scaleY = 0.92 + Math.random() * 0.2;
+    const transY = (Math.random() - 0.5) * 6;
+    span.style.transform = `translateY(${transY}px) rotate(${rot}deg) scaleY(${scaleY})`;
     element.appendChild(span);
   }
 }
 
-// деформируем заголовок и метки
-function deformAll() {
-  deformText(document.getElementById('title'));
-  document.querySelectorAll('.label').forEach(deformText);
-}
-
-// для цифр — деформируем при каждой смене
 function deformNumber(spanCurrent) {
   const text = spanCurrent.textContent;
   spanCurrent.innerHTML = '';
@@ -244,17 +235,17 @@ function deformNumber(spanCurrent) {
     const sp = document.createElement('span');
     sp.className = 'ch';
     sp.textContent = ch;
-    const rot    = (Math.random() - 0.5) * 14;
-    const skewX  = (Math.random() - 0.5) * 12;
-    const skewY  = (Math.random() - 0.5) * 8;
-    const scaleX = 0.85 + Math.random() * 0.35;
-    const scaleY = 0.9  + Math.random() * 0.3;
-    const transY = (Math.random() - 0.5) * 6;
-    sp.style.display = 'inline-block';
-    sp.style.transform = 
-      `translateY(${transY}px) rotate(${rot}deg) skew(${skewX}deg, ${skewY}deg) scale(${scaleX}, ${scaleY})`;
+    const rot = (Math.random() - 0.5) * 10;
+    const scaleY = 0.92 + Math.random() * 0.18;
+    const transY = (Math.random() - 0.5) * 5;
+    sp.style.transform = `translateY(${transY}px) rotate(${rot}deg) scaleY(${scaleY})`;
     spanCurrent.appendChild(sp);
   }
+}
+
+function deformAll() {
+  deformText(document.getElementById('title'));
+  document.querySelectorAll('.label').forEach(deformText);
 }
 
 // ========== ЗВУК ==========
@@ -355,7 +346,7 @@ function doEnd() {
   zero.classList.add('glitch-zero');
   setTimeout(() => {
     zero.classList.remove('glitch-zero');
-    zero.style.color = '#fff';
+    zero.style.color = '#d4ecff';
     void zero.offsetWidth;
     zero.classList.add('physics-fall');
   }, 700);
@@ -407,9 +398,7 @@ function update() {
   if (!initialized) initialized = true;
 }
 
-// сразу деформируем статичные элементы
 deformAll();
-
 update();
 setInterval(update, 1000);
 </script>
