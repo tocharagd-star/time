@@ -29,7 +29,6 @@ body {
   background: #1a0f1a;
 }
 
-/* небо заката — плавный градиент без полос */
 .sky {
   position: fixed;
   top: 0;
@@ -53,7 +52,6 @@ body {
   z-index: 0;
 }
 
-/* шум против бандинга */
 .sky::after {
   content: '';
   position: absolute;
@@ -65,7 +63,6 @@ body {
   mix-blend-mode: overlay;
 }
 
-/* атмосферная дымка для плавности */
 .atmosphere {
   position: fixed;
   inset: 0;
@@ -76,7 +73,6 @@ body {
   pointer-events: none;
 }
 
-/* солнце */
 .sun-wrap {
   position: fixed;
   left: 50%;
@@ -101,7 +97,6 @@ body {
   animation: sun-pulse 5s ease-in-out infinite;
 }
 
-/* большое ореол свечение через radial */
 .sun-glow {
   position: absolute;
   left: 50%;
@@ -130,14 +125,12 @@ body {
   50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
 }
 
-/* дальние горы силуэт */
 .mountains {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 18%;
-  background: linear-gradient(180deg, transparent 0%, rgba(20, 8, 15, 0.6) 60%, rgba(15, 5, 12, 0.95) 100%);
   z-index: 3;
   pointer-events: none;
 }
@@ -148,7 +141,6 @@ body {
   display: block;
 }
 
-/* облака — мягкие радиальные градиенты, не полосы */
 .cloud {
   position: fixed;
   border-radius: 50%;
@@ -159,94 +151,49 @@ body {
 }
 
 .cloud-1 {
-  width: 500px;
-  height: 80px;
-  top: 28%;
-  left: -200px;
-  background: radial-gradient(ellipse at center,
-    rgba(80, 30, 40, 0.7) 0%,
-    rgba(60, 20, 35, 0.5) 40%,
-    transparent 75%);
+  width: 500px; height: 80px; top: 28%; left: -200px;
+  background: radial-gradient(ellipse at center, rgba(80, 30, 40, 0.7) 0%, rgba(60, 20, 35, 0.5) 40%, transparent 75%);
   animation: drift1 90s linear infinite;
 }
 
 .cloud-2 {
-  width: 700px;
-  height: 100px;
-  top: 42%;
-  left: -300px;
-  background: radial-gradient(ellipse at center,
-    rgba(140, 60, 50, 0.55) 0%,
-    rgba(90, 40, 45, 0.35) 45%,
-    transparent 75%);
+  width: 700px; height: 100px; top: 42%; left: -300px;
+  background: radial-gradient(ellipse at center, rgba(140, 60, 50, 0.55) 0%, rgba(90, 40, 45, 0.35) 45%, transparent 75%);
   animation: drift2 130s linear infinite;
 }
 
 .cloud-3 {
-  width: 400px;
-  height: 60px;
-  top: 18%;
-  left: -150px;
-  background: radial-gradient(ellipse at center,
-    rgba(50, 25, 50, 0.6) 0%,
-    rgba(40, 20, 40, 0.4) 45%,
-    transparent 75%);
+  width: 400px; height: 60px; top: 18%; left: -150px;
+  background: radial-gradient(ellipse at center, rgba(50, 25, 50, 0.6) 0%, rgba(40, 20, 40, 0.4) 45%, transparent 75%);
   animation: drift3 110s linear infinite;
 }
 
 .cloud-4 {
-  width: 600px;
-  height: 90px;
-  top: 52%;
-  left: -250px;
-  background: radial-gradient(ellipse at center,
-    rgba(30, 15, 25, 0.7) 0%,
-    rgba(50, 25, 35, 0.45) 45%,
-    transparent 75%);
+  width: 600px; height: 90px; top: 52%; left: -250px;
+  background: radial-gradient(ellipse at center, rgba(30, 15, 25, 0.7) 0%, rgba(50, 25, 35, 0.45) 45%, transparent 75%);
   animation: drift1 160s linear infinite;
 }
 
 .cloud-5 {
-  width: 350px;
-  height: 50px;
-  top: 10%;
-  left: -100px;
-  background: radial-gradient(ellipse at center,
-    rgba(40, 20, 50, 0.55) 0%,
-    transparent 70%);
+  width: 350px; height: 50px; top: 10%; left: -100px;
+  background: radial-gradient(ellipse at center, rgba(40, 20, 50, 0.55) 0%, transparent 70%);
   animation: drift2 200s linear infinite;
 }
 
-@keyframes drift1 {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 400px)); }
-}
+@keyframes drift1 { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 400px)); } }
+@keyframes drift2 { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 500px)); } }
+@keyframes drift3 { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 300px)); } }
 
-@keyframes drift2 {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 500px)); }
-}
-
-@keyframes drift3 {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 300px)); }
-}
-
-/* звёзды наверху */
 .stars {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 40%;
+  top: 0; left: 0;
+  width: 100%; height: 40%;
   z-index: 1;
   pointer-events: none;
 }
 
 .star {
   position: absolute;
-  width: 2px;
-  height: 2px;
   background: #fff;
   border-radius: 50%;
   opacity: 0;
@@ -258,25 +205,17 @@ body {
   50%      { opacity: 0.8; }
 }
 
-/* птицы */
-.birds {
-  position: fixed;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-}
+.birds { position: fixed; inset: 0; z-index: 4; pointer-events: none; }
 
 .bird {
   position: absolute;
-  width: 16px;
-  height: 8px;
+  width: 16px; height: 8px;
   animation: bird-fly 40s linear infinite;
 }
 
 .bird::before {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: 
     radial-gradient(circle at 25% 50%, rgba(15,5,15,0.85) 0%, transparent 40%),
     radial-gradient(circle at 75% 50%, rgba(15,5,15,0.85) 0%, transparent 40%);
@@ -284,8 +223,8 @@ body {
 }
 
 .bird-1 { top: 25%; animation-delay: 0s; }
-.bird-2 { top: 28%; left: -50px; animation-delay: -10s; animation-duration: 50s; }
-.bird-3 { top: 22%; left: -50px; animation-delay: -25s; animation-duration: 60s; }
+.bird-2 { top: 28%; animation-delay: -10s; animation-duration: 50s; }
+.bird-3 { top: 22%; animation-delay: -25s; animation-duration: 60s; }
 
 @keyframes bird-fly {
   0%   { left: -30px; transform: translateY(0); }
@@ -300,7 +239,6 @@ body {
   50%      { transform: scaleY(0.5); }
 }
 
-/* контент */
 h1 {
   font-size: 2rem;
   margin-bottom: 50px;
@@ -341,8 +279,7 @@ h1 {
   text-shadow: 0 2px 20px rgba(0,0,0,0.95), 0 0 40px rgba(0,0,0,0.6);
 }
 
-.number .old,
-.number .new {
+.number .old, .number .new {
   display: block;
   position: absolute;
   width: 100%;
@@ -382,17 +319,10 @@ h1 {
 }
 
 .final-mode .countdown { gap: 0; }
-
-.final-mode #seconds {
-  font-size: 14rem;
-  overflow: visible;
-}
-
+.final-mode #seconds { font-size: 14rem; overflow: visible; }
 .final-mode #sec-label { opacity: 0; }
 
-.beat {
-  animation: beat 0.8s cubic-bezier(0.0, 0.0, 0.2, 1) forwards;
-}
+.beat { animation: beat 0.8s cubic-bezier(0.0, 0.0, 0.2, 1) forwards; }
 
 @keyframes beat {
   0%   { transform: scale(1.5); color: #ff0000; }
@@ -405,14 +335,11 @@ h1 {
   color: #ff0000 !important;
 }
 
-.glitch-zero::before,
-.glitch-zero::after {
+.glitch-zero::before, .glitch-zero::after {
   content: '0';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
 }
 
 .glitch-zero::before {
@@ -435,15 +362,8 @@ h1 {
   100% { transform: translate(0, 0); }
 }
 
-@keyframes glitch-r {
-  0%   { transform: translate(6px, -4px); }
-  100% { transform: translate(0, 0); opacity: 0; }
-}
-
-@keyframes glitch-b {
-  0%   { transform: translate(-5px, 3px); }
-  100% { transform: translate(0, 0); opacity: 0; }
-}
+@keyframes glitch-r { 0% { transform: translate(6px, -4px); } 100% { transform: translate(0, 0); opacity: 0; } }
+@keyframes glitch-b { 0% { transform: translate(-5px, 3px); } 100% { transform: translate(0, 0); opacity: 0; } }
 
 .physics-fall { animation: physics-fall 3s forwards; }
 
@@ -456,8 +376,7 @@ h1 {
 
 .end-text {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   font-size: 3.5rem;
   font-family: monospace;
@@ -469,9 +388,28 @@ h1 {
   text-shadow: 0 0 30px rgba(0,0,0,0.9);
 }
 
-@keyframes fade-in {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+/* кнопка звука */
+.sound-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 200;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-family: monospace;
+  font-size: 14px;
+  padding: 8px 14px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+}
+
+.sound-btn:hover {
+  background: rgba(0,0,0,0.8);
+  border-color: rgba(255,255,255,0.6);
 }
 
 @media (max-width: 600px) {
@@ -514,6 +452,8 @@ h1 {
   <div class="bird bird-3"></div>
 </div>
 
+<button class="sound-btn" id="soundBtn">🔇 SOUND OFF</button>
+
 <h1 id="title">days left</h1>
 
 <div class="countdown" id="countdown">
@@ -549,6 +489,52 @@ for (let i = 0; i < 60; i++) {
   starsContainer.appendChild(s);
 }
 
+// ========== ЗВУК ТИКА ==========
+let audioCtx = null;
+let tickBuffer = null;
+let soundEnabled = false;
+let tickToggle = false; // tick / tock
+
+async function loadTick() {
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const resp = await fetch('tick.wav');
+    const arr = await resp.arrayBuffer();
+    tickBuffer = await audioCtx.decodeAudioData(arr);
+  } catch (e) {
+    console.log('Не удалось загрузить tick.wav', e);
+  }
+}
+
+function playTick() {
+  if (!soundEnabled || !audioCtx || !tickBuffer) return;
+  
+  const src = audioCtx.createBufferSource();
+  src.buffer = tickBuffer;
+  
+  // ТИК = высокий, ТАК = низкий
+  src.playbackRate.value = tickToggle ? 0.85 : 1.15;
+  tickToggle = !tickToggle;
+  
+  const gain = audioCtx.createGain();
+  gain.gain.value = 0.7;
+  
+  src.connect(gain);
+  gain.connect(audioCtx.destination);
+  src.start();
+}
+
+// кнопка
+const soundBtn = document.getElementById('soundBtn');
+soundBtn.addEventListener('click', async () => {
+  if (!audioCtx) await loadTick();
+  if (audioCtx && audioCtx.state === 'suspended') {
+    await audioCtx.resume();
+  }
+  soundEnabled = !soundEnabled;
+  soundBtn.textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
+});
+
 // ============ ТАЙМЕР ============
 const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
 
@@ -562,6 +548,7 @@ const containers = {
 let prev = {};
 let finalMode = false;
 let ended = false;
+let initialized = false;
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -662,8 +649,13 @@ function update() {
     seconds: finalMode ? String(s) : pad(s)
   };
 
+  let secondsChanged = false;
+
   for (const key in now) {
     if (now[key] !== prev[key]) {
+      if (key === 'seconds' && prev[key] !== undefined) {
+        secondsChanged = true;
+      }
       if (finalMode && key === 'seconds') {
         setNumber(containers[key], now[key]);
       } else if (prev[key] !== undefined) {
@@ -675,6 +667,13 @@ function update() {
       prev[key] = now[key];
     }
   }
+
+  // звук каждую секунду
+  if (secondsChanged && initialized) {
+    playTick();
+  }
+  
+  if (!initialized) initialized = true;
 }
 
 update();
