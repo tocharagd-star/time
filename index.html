@@ -26,217 +26,70 @@ body {
   justify-content: center;
   min-height: 100vh;
   position: relative;
-  background: #1a0f1a;
+  background: #000;
 }
 
-.sky {
+/* улыбка SVG по центру за текстом */
+.smile-wrap {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    180deg,
-    #0a0820 0%,
-    #1a1040 12%,
-    #3d1d5e 28%,
-    #6b2858 42%,
-    #a83a52 55%,
-    #d85a3e 67%,
-    #e8843e 76%,
-    #f0a548 83%,
-    #c66838 90%,
-    #4a2030 96%,
-    #15080f 100%
-  );
-  z-index: 0;
-}
-
-.sky::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.015) 1px, transparent 0);
-  background-size: 3px 3px;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-.atmosphere {
-  position: fixed;
-  inset: 0;
-  background: 
-    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255, 140, 70, 0.35) 0%, transparent 60%),
-    radial-gradient(ellipse 120% 40% at 50% 90%, rgba(255, 100, 60, 0.2) 0%, transparent 70%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.sun-wrap {
-  position: fixed;
-  left: 50%;
-  bottom: 5%;
-  transform: translateX(-50%);
-  z-index: 2;
-  pointer-events: none;
-}
-
-.sun {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 45%,
-    #fffaea 0%,
-    #ffeeb0 20%,
-    #ffc870 45%,
-    #ff924a 70%,
-    #ff6030 90%,
-    rgba(255, 70, 30, 0) 100%);
-  position: relative;
-  animation: sun-pulse 5s ease-in-out infinite;
-}
-
-.sun-glow {
-  position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 1200px;
-  height: 1200px;
-  background: radial-gradient(circle at center,
-    rgba(255, 180, 90, 0.55) 0%,
-    rgba(255, 140, 70, 0.3) 18%,
-    rgba(255, 100, 60, 0.18) 32%,
-    rgba(255, 80, 50, 0.08) 50%,
-    transparent 70%);
-  border-radius: 50%;
+  width: 80vmin;
+  height: 80vmin;
+  z-index: 1;
   pointer-events: none;
-  animation: glow-pulse 5s ease-in-out infinite;
-}
-
-@keyframes sun-pulse {
-  0%, 100% { transform: scale(1); filter: brightness(1); }
-  50%      { transform: scale(1.03); filter: brightness(1.1); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); }
-  50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
-}
-
-.mountains {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 18%;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.mountains svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.cloud {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 4;
-  filter: blur(12px);
   opacity: 0.85;
 }
 
-.cloud-1 {
-  width: 500px; height: 80px; top: 28%; left: -200px;
-  background: radial-gradient(ellipse at center, rgba(80, 30, 40, 0.7) 0%, rgba(60, 20, 35, 0.5) 40%, transparent 75%);
-  animation: drift1 90s linear infinite;
+.smile-wrap svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.cloud-2 {
-  width: 700px; height: 100px; top: 42%; left: -300px;
-  background: radial-gradient(ellipse at center, rgba(140, 60, 50, 0.55) 0%, rgba(90, 40, 45, 0.35) 45%, transparent 75%);
-  animation: drift2 130s linear infinite;
+.smile-path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw-smile 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
 }
 
-.cloud-3 {
-  width: 400px; height: 60px; top: 18%; left: -150px;
-  background: radial-gradient(ellipse at center, rgba(50, 25, 50, 0.6) 0%, rgba(40, 20, 40, 0.4) 45%, transparent 75%);
-  animation: drift3 110s linear infinite;
-}
-
-.cloud-4 {
-  width: 600px; height: 90px; top: 52%; left: -250px;
-  background: radial-gradient(ellipse at center, rgba(30, 15, 25, 0.7) 0%, rgba(50, 25, 35, 0.45) 45%, transparent 75%);
-  animation: drift1 160s linear infinite;
-}
-
-.cloud-5 {
-  width: 350px; height: 50px; top: 10%; left: -100px;
-  background: radial-gradient(ellipse at center, rgba(40, 20, 50, 0.55) 0%, transparent 70%);
-  animation: drift2 200s linear infinite;
-}
-
-@keyframes drift1 { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 400px)); } }
-@keyframes drift2 { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 500px)); } }
-@keyframes drift3 { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 300px)); } }
-
-.stars {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 40%;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.star {
-  position: absolute;
-  background: #fff;
-  border-radius: 50%;
+.eye {
+  fill: #fff;
   opacity: 0;
-  animation: twinkle 4s ease-in-out infinite;
+  animation: eye-appear 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
 }
 
-@keyframes twinkle {
-  0%, 100% { opacity: 0; }
-  50%      { opacity: 0.8; }
+.eye-left  { animation-delay: 0.8s; }
+.eye-right { animation-delay: 1.0s; }
+
+@keyframes draw-smile {
+  0%   { stroke-dashoffset: 1000; opacity: 0; }
+  20%  { opacity: 1; }
+  50%  { stroke-dashoffset: 0; opacity: 1; }
+  85%  { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
 }
 
-.birds { position: fixed; inset: 0; z-index: 4; pointer-events: none; }
-
-.bird {
-  position: absolute;
-  width: 16px; height: 8px;
-  animation: bird-fly 40s linear infinite;
+@keyframes eye-appear {
+  0%, 25% { opacity: 0; transform: scale(0); }
+  40%     { opacity: 1; transform: scale(1.2); }
+  50%     { opacity: 1; transform: scale(1); }
+  85%     { opacity: 1; }
+  100%    { opacity: 0; }
 }
 
-.bird::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: 
-    radial-gradient(circle at 25% 50%, rgba(15,5,15,0.85) 0%, transparent 40%),
-    radial-gradient(circle at 75% 50%, rgba(15,5,15,0.85) 0%, transparent 40%);
-  animation: wing-flap 0.6s ease-in-out infinite;
-}
-
-.bird-1 { top: 25%; animation-delay: 0s; }
-.bird-2 { top: 28%; animation-delay: -10s; animation-duration: 50s; }
-.bird-3 { top: 22%; animation-delay: -25s; animation-duration: 60s; }
-
-@keyframes bird-fly {
-  0%   { left: -30px; transform: translateY(0); }
-  25%  { transform: translateY(-15px); }
-  50%  { transform: translateY(5px); }
-  75%  { transform: translateY(-10px); }
-  100% { left: calc(100% + 30px); transform: translateY(0); }
-}
-
-@keyframes wing-flap {
-  0%, 100% { transform: scaleY(1); }
-  50%      { transform: scaleY(0.5); }
+/* глаза вращаются вокруг своего центра */
+.eye {
+  transform-origin: center center;
+  transform-box: fill-box;
 }
 
 h1 {
@@ -248,7 +101,7 @@ h1 {
   transition: opacity 1s ease;
   position: relative;
   z-index: 10;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.5);
+  text-shadow: 0 0 20px #000, 0 0 40px #000;
 }
 
 .countdown {
@@ -274,7 +127,7 @@ h1 {
   line-height: 1.2;
   position: relative;
   transition: font-size 1s ease;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.95), 0 0 40px rgba(0,0,0,0.6);
+  text-shadow: 0 0 20px #000, 0 0 40px #000;
 }
 
 .number .current {
@@ -282,14 +135,13 @@ h1 {
   transform-origin: center center;
 }
 
-/* НОВАЯ АНИМАЦИЯ — пульс с цветом */
 .pulse-tick {
   animation: pulse-tick 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
 }
 
 @keyframes pulse-tick {
-  0%   { transform: scale(1.45); color: #ff3030; text-shadow: 0 0 30px rgba(255,60,60,0.8), 0 2px 20px rgba(0,0,0,0.95); }
-  100% { transform: scale(1);    color: #ffffff; text-shadow: 0 2px 20px rgba(0,0,0,0.95), 0 0 40px rgba(0,0,0,0.6); }
+  0%   { transform: scale(1.45); color: #ff3030; text-shadow: 0 0 30px rgba(255,60,60,0.8), 0 0 20px #000; }
+  100% { transform: scale(1);    color: #ffffff; text-shadow: 0 0 20px #000, 0 0 40px #000; }
 }
 
 .label {
@@ -299,7 +151,7 @@ h1 {
   margin-top: 10px;
   opacity: 0.75;
   transition: opacity 1s ease;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+  text-shadow: 0 0 10px #000;
 }
 
 .final-mode .unit:not(#sec-unit) {
@@ -402,77 +254,24 @@ h1 {
   border-color: rgba(255,255,255,0.6);
 }
 
-/* оверлей для активации звука */
-.sound-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-}
-
-.sound-overlay .msg {
-  text-align: center;
-  font-family: monospace;
-  color: #fff;
-  font-size: 1.5rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 30px 50px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: rgba(0,0,0,0.5);
-}
-
-.sound-overlay .msg small {
-  display: block;
-  font-size: 0.8rem;
-  opacity: 0.6;
-  margin-top: 10px;
-  letter-spacing: 2px;
-}
-
 @media (max-width: 600px) {
   .countdown { gap: 20px; }
   .number { font-size: 2.5rem; min-width: 65px; }
   .final-mode #seconds { font-size: 7rem; }
   h1 { font-size: 1.2rem; margin-bottom: 30px; }
-  .sun { width: 180px; height: 180px; }
-  .sun-glow { width: 800px; height: 800px; }
 }
 </style>
 </head>
 <body>
 
-<div class="sky"></div>
-<div class="stars" id="stars"></div>
-<div class="atmosphere"></div>
-
-<div class="sun-wrap">
-  <div class="sun-glow"></div>
-  <div class="sun"></div>
-</div>
-
-<div class="cloud cloud-5"></div>
-<div class="cloud cloud-3"></div>
-<div class="cloud cloud-1"></div>
-<div class="cloud cloud-2"></div>
-<div class="cloud cloud-4"></div>
-
-<div class="mountains">
-  <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
-    <path d="M0,200 L0,140 L80,100 L160,130 L240,80 L340,110 L420,70 L520,120 L620,90 L720,130 L820,100 L920,140 L1020,110 L1120,150 L1200,120 L1200,200 Z" fill="#0a0508" opacity="0.95"/>
-    <path d="M0,200 L0,170 L100,150 L200,165 L320,140 L430,160 L540,135 L650,165 L760,145 L880,170 L1000,150 L1100,175 L1200,155 L1200,200 Z" fill="#1a0a15" opacity="0.9"/>
+<div class="smile-wrap">
+  <svg viewBox="0 0 400 400">
+    <!-- глаза -->
+    <circle class="eye eye-left"  cx="140" cy="160" r="18"/>
+    <circle class="eye eye-right" cx="260" cy="160" r="18"/>
+    <!-- улыбка -->
+    <path class="smile-path" d="M 100 230 Q 200 330 300 230"/>
   </svg>
-</div>
-
-<div class="birds">
-  <div class="bird bird-1"></div>
-  <div class="bird bird-2"></div>
-  <div class="bird bird-3"></div>
 </div>
 
 <button class="sound-btn" id="soundBtn">🔊 SOUND ON</button>
@@ -498,28 +297,7 @@ h1 {
   </div>
 </div>
 
-<!-- оверлей чтобы активировать звук -->
-<div class="sound-overlay" id="soundOverlay">
-  <div class="msg">
-    CLICK TO START
-    <small>включить звук</small>
-  </div>
-</div>
-
 <script>
-// звёзды
-const starsContainer = document.getElementById('stars');
-for (let i = 0; i < 60; i++) {
-  const s = document.createElement('div');
-  s.className = 'star';
-  s.style.left = Math.random() * 100 + '%';
-  s.style.top = Math.random() * 100 + '%';
-  s.style.animationDelay = (Math.random() * 4) + 's';
-  s.style.animationDuration = (3 + Math.random() * 3) + 's';
-  s.style.width = s.style.height = (1 + Math.random() * 1.5) + 'px';
-  starsContainer.appendChild(s);
-}
-
 // ========== ЗВУК ==========
 let audioCtx = null;
 let tickBuffer = null;
@@ -528,10 +306,14 @@ let tickToggle = false;
 
 async function loadTick() {
   try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const resp = await fetch('tick.wav');
-    const arr = await resp.arrayBuffer();
-    tickBuffer = await audioCtx.decodeAudioData(arr);
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (!tickBuffer) {
+      const resp = await fetch('tick.wav');
+      const arr = await resp.arrayBuffer();
+      tickBuffer = await audioCtx.decodeAudioData(arr);
+    }
   } catch (e) {
     console.log('Не загрузился tick.wav', e);
   }
@@ -550,21 +332,24 @@ function playTick() {
   src.start();
 }
 
-// оверлей запуска
-const overlay = document.getElementById('soundOverlay');
-const soundBtn = document.getElementById('soundBtn');
-
-overlay.addEventListener('click', async () => {
+// автоактивация звука при любом первом клике/тапе
+async function unlockAudio() {
   await loadTick();
   if (audioCtx && audioCtx.state === 'suspended') {
     await audioCtx.resume();
   }
-  overlay.style.display = 'none';
-});
+}
 
+document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('keydown', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true });
+
+// сразу пробуем загрузить (звук активируется при первом действии)
+loadTick();
+
+const soundBtn = document.getElementById('soundBtn');
 soundBtn.addEventListener('click', async () => {
-  if (!audioCtx) await loadTick();
-  if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+  await unlockAudio();
   soundEnabled = !soundEnabled;
   soundBtn.textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
 });
@@ -596,7 +381,6 @@ function setNumberBeat(container, val) {
   }
 }
 
-// НОВАЯ АНИМАЦИЯ — пульс
 function pulseChange(container, newVal) {
   const cur = container.querySelector('.current');
   if (!cur) return;
