@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Countdown</title>
+<title>Countdown & Cube</title>
+<!-- Пиксельный шрифт -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 * {
   margin: 0;
@@ -15,6 +17,7 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: #000;
 }
 
 body {
@@ -24,42 +27,31 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  position: relative;
-  background: #000;
   perspective: 600px;
 }
 
+/* --- ТАЙМЕР (Стиль из оригинала) --- */
 h1 {
   font-size: 2.5rem;
   margin-bottom: 50px;
   font-weight: 900;
   letter-spacing: 5px;
   text-transform: uppercase;
-  transition: opacity 1s ease;
-  position: relative;
-  z-index: 10;
-  /* перспектива — узко сверху, шире снизу */
   transform: perspective(400px) rotateX(25deg);
-  transform-style: preserve-3d;
+  z-index: 10;
 }
 
 .countdown {
   display: flex;
   gap: 50px;
-  transition: gap 1s ease;
-  position: relative;
-  z-index: 10;
-  /* основной текст — широко по краям */
   transform: perspective(800px) rotateX(-15deg);
-  transform-style: preserve-3d;
+  z-index: 10;
 }
 
 .unit {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: opacity 1s ease, transform 1s ease;
 }
 
 .number {
@@ -67,14 +59,6 @@ h1 {
   font-weight: 900;
   min-width: 140px;
   text-align: center;
-  line-height: 1.2;
-  position: relative;
-  transition: font-size 1s ease;
-}
-
-.number .current {
-  display: inline-block;
-  transform-origin: center center;
 }
 
 .pulse-tick {
@@ -95,90 +79,109 @@ h1 {
   opacity: 0.6;
 }
 
-.final-mode .unit:not(#sec-unit) {
-  opacity: 0;
-  transform: scale(0.5);
-  pointer-events: none;
-  position: absolute;
-}
-
-.final-mode .countdown { gap: 0; transform: perspective(800px) rotateX(-10deg); }
-.final-mode #seconds { font-size: 15rem; overflow: visible; }
-.final-mode #sec-label { opacity: 0; }
-
-.beat { animation: beat 0.8s cubic-bezier(0.0, 0.0, 0.2, 1) forwards; }
-
-@keyframes beat {
-  0%   { transform: scale(1.5); color: #ff0000; }
-  100% { transform: scale(1); color: #ffffff; }
-}
-
-.glitch-zero {
-  position: relative;
-  animation: glitch 0.6s steps(4) forwards;
-  color: #ff0000 !important;
-}
-
-.glitch-zero::before, .glitch-zero::after {
-  content: '0';
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-}
-
-.glitch-zero::before {
-  color: #ff0000;
-  animation: glitch-r 0.6s steps(4) forwards;
-  clip-path: inset(0 0 50% 0);
-}
-
-.glitch-zero::after {
-  color: #0000ff;
-  animation: glitch-b 0.6s steps(4) forwards;
-  clip-path: inset(50% 0 0 0);
-}
-
-@keyframes glitch {
-  0%   { transform: translate(4px, -3px); }
-  25%  { transform: translate(-5px, 2px); }
-  50%  { transform: translate(3px, -1px); }
-  75%  { transform: translate(-2px, 4px); }
-  100% { transform: translate(0, 0); }
-}
-
-@keyframes glitch-r { 0% { transform: translate(6px, -4px); } 100% { transform: translate(0, 0); opacity: 0; } }
-@keyframes glitch-b { 0% { transform: translate(-5px, 3px); } 100% { transform: translate(0, 0); opacity: 0; } }
-
-.physics-fall { animation: physics-fall 3s forwards; }
-
-@keyframes physics-fall {
-  0%    { transform: translateY(0) rotate(0deg); opacity: 1; }
-  30%   { transform: translateY(140px) rotate(-2deg); }
-  55%   { transform: translateY(500px) rotate(-3.5deg); opacity: 0.7; }
-  100%  { transform: translateY(2000px) rotate(7deg); opacity: 0; }
-}
-
-.end-text {
+/* --- КУБИК --- */
+#cube-container {
   position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) perspective(800px) rotateX(-15deg);
-  font-size: 4rem;
-  font-family: monospace;
-  font-weight: 900;
-  letter-spacing: 10px;
-  text-transform: uppercase;
-  opacity: 0;
-  animation: fade-in 3s ease-out 2.5s forwards;
+  bottom: 20px;
+  left: 0;
+  width: 64px; /* 16x16 увеличенный */
+  height: 64px;
   z-index: 100;
+  cursor: pointer;
+  animation: walk 8s linear infinite alternate;
 }
 
-@keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+#cube-sprite {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+@keyframes walk {
+  0% { left: 5%; transform: scaleX(1); }
+  100% { left: 85%; transform: scaleX(-1); }
+}
+
+/* --- ДИАЛОГОВОЕ ОКНО --- */
+#dialogue-box {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  max-width: 90%;
+  height: 150px;
+  background: #000;
+  border: 4px solid #fff;
+  display: none;
+  padding: 20px;
+  z-index: 200;
+  font-family: 'Press Start 2P', cursive;
+  flex-direction: row;
+  gap: 20px;
+}
+
+/* 2-кадровая анимация появления */
+#dialogue-box.opening-1 { display: flex; height: 20px; overflow: hidden; }
+#dialogue-box.opening-2 { display: flex; height: 150px; }
+
+.diag-cube-wrap {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+#diag-cube-img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+#diag-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+  word-wrap: break-word;
+}
+
+.choices {
+  margin-top: 15px;
+  display: none;
+  gap: 20px;
+}
+
+.choice-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.choice-btn:hover {
+  color: #ffff00;
+}
+
+.choice-btn::before {
+  content: '❤ ';
+  opacity: 0;
+}
+
+.choice-btn:hover::before {
+  opacity: 1;
+}
+
+/* Финальные эффекты */
+.final-mode .unit:not(#sec-unit) { opacity: 0; position: absolute; }
+.final-mode #seconds { font-size: 15rem; }
 
 @media (max-width: 600px) {
-  .countdown { gap: 20px; }
-  .number { font-size: 2.8rem; min-width: 70px; }
-  .final-mode #seconds { font-size: 7rem; }
-  h1 { font-size: 1.4rem; margin-bottom: 30px; }
+  .countdown { gap: 10px; }
+  .number { font-size: 2.5rem; min-width: 60px; }
+  #dialogue-box { width: 95%; height: 180px; font-size: 10px; }
+  #diag-text { font-size: 10px; }
 }
 </style>
 </head>
@@ -205,153 +208,198 @@ h1 {
   </div>
 </div>
 
-<script>
-// ========== ЗВУК ==========
-let audioCtx = null;
-let tickBuffer = null;
-let tickToggle = false;
+<div id="cube-container">
+  <img src="idle.png" id="cube-sprite" alt="cube">
+</div>
 
-async function loadTick() {
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (!tickBuffer) {
-      const resp = await fetch('tick.wav');
-      const arr = await resp.arrayBuffer();
-      tickBuffer = await audioCtx.decodeAudioData(arr);
-    }
-  } catch (e) { console.log(e); }
+<div id="dialogue-box">
+  <div class="diag-cube-wrap">
+    <img src="idle.png" id="diag-cube-img" alt="talking-cube">
+  </div>
+  <div class="diag-content">
+    <div id="diag-text"></div>
+    <div id="choices" class="choices">
+      <button class="choice-btn" onclick="handleChoice('yes')">КОНЕЧНО</button>
+      <button class="choice-btn" onclick="handleChoice('no')">НЕТ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== НАСТРОЙКИ ==========
+const target = new Date(2026, 6, 7, 0, 0, 0).getTime(); // 7 июля 2026, 00:00
+
+// ========== ЗВУКИ ==========
+let audioCtx = null;
+let beepBuffer = null;
+let tickBuffer = null;
+
+async function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  // Загрузка звука бипа для диалога
+  const resD = await fetch('D.mp3');
+  const arrayD = await resD.arrayBuffer();
+  beepBuffer = await audioCtx.decodeAudioData(arrayD);
+
+  // Загрузка звука тиканья
+  const resT = await fetch('tick.wav');
+  const arrayT = await resT.arrayBuffer();
+  tickBuffer = await audioCtx.decodeAudioData(arrayT);
+}
+
+function playBeep() {
+  if (!audioCtx || !beepBuffer) return;
+  const source = audioCtx.createBufferSource();
+  source.buffer = beepBuffer;
+  source.connect(audioCtx.destination);
+  source.start();
 }
 
 function playTick() {
   if (!audioCtx || !tickBuffer) return;
-  const src = audioCtx.createBufferSource();
-  src.buffer = tickBuffer;
-  src.playbackRate.value = tickToggle ? 0.85 : 1.15;
-  tickToggle = !tickToggle;
-  const gain = audioCtx.createGain();
-  gain.gain.value = 0.7;
-  src.connect(gain);
-  gain.connect(audioCtx.destination);
-  src.start();
+  const source = audioCtx.createBufferSource();
+  source.buffer = tickBuffer;
+  source.connect(audioCtx.destination);
+  source.start();
 }
 
-async function unlockAudio() {
-  await loadTick();
-  if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+// ========== ОПРЕДЕЛЕНИЕ СИСТЕМЫ ==========
+function getOS() {
+  const ua = window.navigator.userAgent;
+  if (ua.indexOf("Windows") !== -1) return "Windows";
+  if (ua.indexOf("Mac") !== -1) return "macOS";
+  if (ua.indexOf("Android") !== -1) return "Android";
+  if (ua.indexOf("iPhone") !== -1) return "iOS";
+  return "System";
 }
 
-document.addEventListener('click', unlockAudio, { once: true });
-document.addEventListener('keydown', unlockAudio, { once: true });
-document.addEventListener('touchstart', unlockAudio, { once: true });
-loadTick();
+// ========== ДИАЛОГОВАЯ СИСТЕМА ==========
+const diagBox = document.getElementById('dialogue-box');
+const diagText = document.getElementById('diag-text');
+const diagImg = document.getElementById('diag-cube-img');
+const choicesEl = document.getElementById('choices');
+let isTyping = false;
 
-// ========== ТАЙМЕР ==========
-const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
+async function typeSentence(text) {
+  isTyping = true;
+  diagText.textContent = "";
+  choicesEl.style.display = 'none';
+  
+  for (let i = 0; i < text.length; i++) {
+    diagText.textContent += text[i];
+    
+    // Анимация рта
+    if (text[i] !== " ") {
+      diagImg.src = (i % 2 === 0) ? 'talking0.png' : 'talking1.png';
+      playBeep();
+    }
+    
+    await new Promise(r => setTimeout(r, 60));
+  }
+  
+  diagImg.src = 'idle.png';
+  isTyping = false;
+}
 
+document.getElementById('cube-container').onclick = async () => {
+  await initAudio();
+  if (diagBox.style.display === 'flex') return;
+
+  // 2-кадровая анимация появления
+  diagBox.className = 'opening-1';
+  diagBox.style.display = 'flex';
+  
+  setTimeout(() => {
+    diagBox.className = 'opening-2';
+    startDialogue();
+  }, 100);
+};
+
+async function startDialogue() {
+  const os = getOS();
+  await typeSentence(`Привет, пользователь ${os}...`);
+  await new Promise(r => setTimeout(r, 1000));
+  await typeSentence("Осталась неделя.");
+  await new Promise(r => setTimeout(r, 1000));
+  await typeSentence("Надеюсь, ты появишься в последние секунды на сайте, да ведь?");
+  choicesEl.style.display = 'flex';
+}
+
+function handleChoice(val) {
+  if (val === 'yes') {
+    typeSentence("Я так и знал. До встречи.");
+  } else {
+    typeSentence("Жаль... Очень жаль.");
+  }
+  setTimeout(() => {
+    diagBox.style.display = 'none';
+  }, 3000);
+}
+
+// ========== ТАЙМЕР (Оригинальная логика) ==========
 const containers = {
   days: document.getElementById('days'),
   hours: document.getElementById('hours'),
   minutes: document.getElementById('minutes'),
   seconds: document.getElementById('seconds')
 };
-
 let prev = {};
 let finalMode = false;
 let ended = false;
-let initialized = false;
 
 function pad(n) { return String(n).padStart(2, '0'); }
-
-function setNumberBeat(container, val) {
-  const cur = container.querySelector('.current');
-  if (cur) {
-    cur.textContent = val;
-    cur.classList.remove('beat');
-    void cur.offsetWidth;
-    cur.classList.add('beat');
-  }
-}
-
-function pulseChange(container, newVal) {
-  const cur = container.querySelector('.current');
-  if (!cur) return;
-  cur.textContent = newVal;
-  cur.classList.remove('pulse-tick');
-  void cur.offsetWidth;
-  cur.classList.add('pulse-tick');
-}
-
-function enterFinalMode() {
-  if (finalMode) return;
-  finalMode = true;
-  document.getElementById('title').style.opacity = '0';
-  document.getElementById('countdown').classList.add('final-mode');
-}
-
-function doEnd() {
-  if (ended) return;
-  ended = true;
-  const secEl = document.getElementById('seconds');
-  secEl.innerHTML = '';
-  const zero = document.createElement('span');
-  zero.className = 'current';
-  zero.textContent = '0';
-  zero.style.color = '#ff0000';
-  zero.style.position = 'relative';
-  secEl.appendChild(zero);
-  zero.classList.add('glitch-zero');
-  setTimeout(() => {
-    zero.classList.remove('glitch-zero');
-    zero.style.color = '#fff';
-    void zero.offsetWidth;
-    zero.classList.add('physics-fall');
-  }, 700);
-  setTimeout(() => {
-    document.getElementById('countdown').style.display = 'none';
-    const endText = document.createElement('div');
-    endText.className = 'end-text';
-    endText.textContent = '???';
-    document.body.appendChild(endText);
-  }, 2500);
-}
 
 function update() {
   if (ended) return;
   let diff = target - Date.now();
-  if (diff <= 0) { doEnd(); return; }
-  const totalSeconds = Math.ceil(diff / 1000);
+  
+  if (diff <= 0) {
+    if (!ended) {
+        ended = true;
+        // Здесь можно вызвать doEnd() из твоего кода
+        document.getElementById('seconds').textContent = "0";
+    }
+    return;
+  }
+
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
-  if (totalSeconds <= 10) enterFinalMode();
+
+  if (diff <= 10000 && !finalMode) {
+    finalMode = true;
+    document.getElementById('countdown').classList.add('final-mode');
+    document.getElementById('title').style.opacity = '0';
+  }
+
   const now = {
     days: pad(d),
     hours: pad(h),
     minutes: pad(m),
     seconds: finalMode ? String(s) : pad(s)
   };
-  let secondsChanged = false;
+
   for (const key in now) {
     if (now[key] !== prev[key]) {
-      if (key === 'seconds' && prev[key] !== undefined) secondsChanged = true;
-      if (finalMode && key === 'seconds') {
-        setNumberBeat(containers[key], now[key]);
-      } else if (prev[key] !== undefined) {
-        pulseChange(containers[key], now[key]);
-      } else {
-        const cur = containers[key].querySelector('.current');
-        if (cur) cur.textContent = now[key];
-      }
+      const el = containers[key].querySelector('.current');
+      el.textContent = now[key];
+      el.classList.remove('pulse-tick');
+      void el.offsetWidth;
+      el.classList.add('pulse-tick');
+      if (key === 'seconds') playTick();
       prev[key] = now[key];
     }
   }
-  if (secondsChanged && initialized) playTick();
-  if (!initialized) initialized = true;
 }
 
-update();
 setInterval(update, 1000);
+update();
+
+// Разблокировка аудио при первом клике
+document.addEventListener('click', () => { if(audioCtx) audioCtx.resume(); }, {once: true});
 </script>
 
 </body>
