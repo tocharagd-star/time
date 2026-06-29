@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Countdown & Cube</title>
-<!-- Пиксельный шрифт -->
+<title>Countdown 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 * {
@@ -22,30 +21,28 @@ html, body {
 
 body {
   color: #fff;
-  font-family: monospace;
+  font-family: 'Press Start 2P', cursive;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  perspective: 600px;
+  perspective: 1000px;
 }
 
-/* --- ТАЙМЕР (Стиль из оригинала) --- */
+/* --- ТАЙМЕР --- */
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 50px;
-  font-weight: 900;
-  letter-spacing: 5px;
+  font-size: 1.2rem;
+  margin-bottom: 60px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  transform: perspective(400px) rotateX(25deg);
-  z-index: 10;
+  transform: perspective(400px) rotateX(20deg);
+  opacity: 0.8;
 }
 
 .countdown {
   display: flex;
-  gap: 50px;
-  transform: perspective(800px) rotateX(-15deg);
-  z-index: 10;
+  gap: 30px;
+  transform: perspective(800px) rotateX(-10deg);
 }
 
 .unit {
@@ -55,80 +52,87 @@ h1 {
 }
 
 .number {
-  font-size: 5.5rem;
-  font-weight: 900;
-  min-width: 140px;
+  font-size: 3.5rem; /* Чуть меньше из-за широкого пиксельного шрифта */
+  min-width: 120px;
   text-align: center;
+  position: relative;
 }
 
+.current {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Резкое увеличение и плавное уменьшение */
 .pulse-tick {
-  animation: pulse-tick 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  animation: pulse-tick 0.8s cubic-bezier(0.15, 0.9, 0.3, 1) forwards;
 }
 
 @keyframes pulse-tick {
-  0%   { transform: scale(1.45); color: #ff3030; }
-  100% { transform: scale(1);    color: #ffffff; }
+  0%   { transform: scale(1.6); color: #ff0000; }
+  100% { transform: scale(1);   color: #ffffff; }
 }
 
 .label {
-  font-size: 0.85rem;
-  font-weight: 900;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-top: 14px;
-  opacity: 0.6;
+  font-size: 0.6rem;
+  margin-top: 20px;
+  opacity: 0.5;
 }
 
-/* --- КУБИК --- */
+/* --- КУБИК ВНИЗУ --- */
 #cube-container {
   position: fixed;
-  bottom: 20px;
+  bottom: 30px;
   left: 0;
-  width: 64px; /* 16x16 увеличенный */
+  width: 64px; 
   height: 64px;
   z-index: 100;
   cursor: pointer;
-  animation: walk 8s linear infinite alternate;
+  animation: walk 10s linear infinite alternate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #cube-sprite {
-  width: 100%;
-  height: 100%;
-  image-rendering: pixelated;
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated; /* Чтобы пиксели были острыми */
+  object-fit: contain;
 }
 
 @keyframes walk {
-  0% { left: 5%; transform: scaleX(1); }
-  100% { left: 85%; transform: scaleX(-1); }
+  0% { left: 10%; transform: scaleX(1); }
+  100% { left: 80%; transform: scaleX(-1); }
 }
 
-/* --- ДИАЛОГОВОЕ ОКНО --- */
+/* --- ДИАЛОГ (UNDERTALE STYLE) --- */
 #dialogue-box {
   position: fixed;
-  bottom: 100px;
+  bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
   width: 600px;
   max-width: 90%;
-  height: 150px;
+  min-height: 140px;
   background: #000;
   border: 4px solid #fff;
   display: none;
   padding: 20px;
   z-index: 200;
-  font-family: 'Press Start 2P', cursive;
   flex-direction: row;
   gap: 20px;
 }
 
 /* 2-кадровая анимация появления */
-#dialogue-box.opening-1 { display: flex; height: 20px; overflow: hidden; }
-#dialogue-box.opening-2 { display: flex; height: 150px; }
+#dialogue-box.opening-1 { display: flex; transform: translateX(-50%) scaleY(0.1); }
+#dialogue-box.opening-2 { display: flex; transform: translateX(-50%) scaleY(1); }
 
 .diag-cube-wrap {
   width: 80px;
   height: 80px;
   flex-shrink: 0;
+  border: 2px solid #333;
 }
 
 #diag-cube-img {
@@ -139,15 +143,14 @@ h1 {
 
 #diag-text {
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.8;
   color: #fff;
-  word-wrap: break-word;
 }
 
 .choices {
-  margin-top: 15px;
+  margin-top: 20px;
   display: none;
-  gap: 20px;
+  gap: 30px;
 }
 
 .choice-btn {
@@ -155,9 +158,8 @@ h1 {
   border: none;
   color: #fff;
   font-family: 'Press Start 2P', cursive;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
-  padding: 5px;
 }
 
 .choice-btn:hover {
@@ -165,23 +167,17 @@ h1 {
 }
 
 .choice-btn::before {
-  content: '❤ ';
-  opacity: 0;
+  content: '* ';
 }
 
-.choice-btn:hover::before {
-  opacity: 1;
-}
-
-/* Финальные эффекты */
-.final-mode .unit:not(#sec-unit) { opacity: 0; position: absolute; }
-.final-mode #seconds { font-size: 15rem; }
+/* Финальный режим */
+.final-mode .unit:not(#sec-unit) { display: none; }
+.final-mode #seconds { font-size: 10rem; }
 
 @media (max-width: 600px) {
+  .number { font-size: 1.8rem; min-width: 60px; }
+  #dialogue-box { width: 95%; flex-direction: column; align-items: center; text-align: center; }
   .countdown { gap: 10px; }
-  .number { font-size: 2.5rem; min-width: 60px; }
-  #dialogue-box { width: 95%; height: 180px; font-size: 10px; }
-  #diag-text { font-size: 10px; }
 }
 </style>
 </head>
@@ -190,21 +186,21 @@ h1 {
 <h1 id="title">days left</h1>
 
 <div class="countdown" id="countdown">
-  <div class="unit" id="day-unit">
+  <div class="unit">
     <div class="number" id="days"><span class="current">00</span></div>
-    <div class="label">days</div>
+    <div class="label">DAYS</div>
   </div>
-  <div class="unit" id="hr-unit">
+  <div class="unit">
     <div class="number" id="hours"><span class="current">00</span></div>
-    <div class="label">hours</div>
+    <div class="label">HOURS</div>
   </div>
-  <div class="unit" id="min-unit">
+  <div class="unit">
     <div class="number" id="minutes"><span class="current">00</span></div>
-    <div class="label">minutes</div>
+    <div class="label">MINUTES</div>
   </div>
   <div class="unit" id="sec-unit">
     <div class="number" id="seconds"><span class="current">00</span></div>
-    <div class="label" id="sec-label">seconds</div>
+    <div class="label" id="sec-label">SECONDS</div>
   </div>
 </div>
 
@@ -214,39 +210,33 @@ h1 {
 
 <div id="dialogue-box">
   <div class="diag-cube-wrap">
-    <img src="idle.png" id="diag-cube-img" alt="talking-cube">
+    <img src="idle.png" id="diag-cube-img">
   </div>
   <div class="diag-content">
     <div id="diag-text"></div>
     <div id="choices" class="choices">
-      <button class="choice-btn" onclick="handleChoice('yes')">КОНЕЧНО</button>
-      <button class="choice-btn" onclick="handleChoice('no')">НЕТ</button>
+      <button class="choice-btn" onclick="handleChoice('yes')">Of course</button>
+      <button class="choice-btn" onclick="handleChoice('no')">No</button>
     </div>
   </div>
 </div>
 
 <script>
-// ========== НАСТРОЙКИ ==========
-const target = new Date(2026, 6, 7, 0, 0, 0).getTime(); // 7 июля 2026, 00:00
+// ТАРГЕТ: 7 июля 2026, 00:00:00
+const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
 
-// ========== ЗВУКИ ==========
 let audioCtx = null;
 let beepBuffer = null;
-let tickBuffer = null;
 
+// Инициализация звука
 async function initAudio() {
   if (audioCtx) return;
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  
-  // Загрузка звука бипа для диалога
-  const resD = await fetch('D.mp3');
-  const arrayD = await resD.arrayBuffer();
-  beepBuffer = await audioCtx.decodeAudioData(arrayD);
-
-  // Загрузка звука тиканья
-  const resT = await fetch('tick.wav');
-  const arrayT = await resT.arrayBuffer();
-  tickBuffer = await audioCtx.decodeAudioData(arrayT);
+  try {
+    const res = await fetch('D.mp3');
+    const array = await res.arrayBuffer();
+    beepBuffer = await audioCtx.decodeAudioData(array);
+  } catch(e) { console.error("Sound D.mp3 not found"); }
 }
 
 function playBeep() {
@@ -257,15 +247,6 @@ function playBeep() {
   source.start();
 }
 
-function playTick() {
-  if (!audioCtx || !tickBuffer) return;
-  const source = audioCtx.createBufferSource();
-  source.buffer = tickBuffer;
-  source.connect(audioCtx.destination);
-  source.start();
-}
-
-// ========== ОПРЕДЕЛЕНИЕ СИСТЕМЫ ==========
 function getOS() {
   const ua = window.navigator.userAgent;
   if (ua.indexOf("Windows") !== -1) return "Windows";
@@ -275,32 +256,24 @@ function getOS() {
   return "System";
 }
 
-// ========== ДИАЛОГОВАЯ СИСТЕМА ==========
+// ДИАЛОГ
 const diagBox = document.getElementById('dialogue-box');
 const diagText = document.getElementById('diag-text');
 const diagImg = document.getElementById('diag-cube-img');
 const choicesEl = document.getElementById('choices');
-let isTyping = false;
 
-async function typeSentence(text) {
-  isTyping = true;
+async function typeText(text) {
   diagText.textContent = "";
   choicesEl.style.display = 'none';
-  
   for (let i = 0; i < text.length; i++) {
     diagText.textContent += text[i];
-    
-    // Анимация рта
     if (text[i] !== " ") {
       diagImg.src = (i % 2 === 0) ? 'talking0.png' : 'talking1.png';
       playBeep();
     }
-    
-    await new Promise(r => setTimeout(r, 60));
+    await new Promise(r => setTimeout(r, 50));
   }
-  
   diagImg.src = 'idle.png';
-  isTyping = false;
 }
 
 document.getElementById('cube-container').onclick = async () => {
@@ -310,35 +283,32 @@ document.getElementById('cube-container').onclick = async () => {
   // 2-кадровая анимация появления
   diagBox.className = 'opening-1';
   diagBox.style.display = 'flex';
-  
   setTimeout(() => {
     diagBox.className = 'opening-2';
     startDialogue();
-  }, 100);
+  }, 50);
 };
 
 async function startDialogue() {
   const os = getOS();
-  await typeSentence(`Привет, пользователь ${os}...`);
-  await new Promise(r => setTimeout(r, 1000));
-  await typeSentence("Осталась неделя.");
-  await new Promise(r => setTimeout(r, 1000));
-  await typeSentence("Надеюсь, ты появишься в последние секунды на сайте, да ведь?");
+  await typeText(`Hello, ${os} user...`);
+  await new Promise(r => setTimeout(r, 800));
+  await typeText("One week left.");
+  await new Promise(r => setTimeout(r, 800));
+  await typeText("I hope you'll show up in the final seconds on the site, right?");
   choicesEl.style.display = 'flex';
 }
 
 function handleChoice(val) {
   if (val === 'yes') {
-    typeSentence("Я так и знал. До встречи.");
+    typeText("I knew it. See you soon.");
   } else {
-    typeSentence("Жаль... Очень жаль.");
+    typeText("That's... unfortunate.");
   }
-  setTimeout(() => {
-    diagBox.style.display = 'none';
-  }, 3000);
+  setTimeout(() => { diagBox.style.display = 'none'; }, 3000);
 }
 
-// ========== ТАЙМЕР (Оригинальная логика) ==========
+// ТАЙМЕР
 const containers = {
   days: document.getElementById('days'),
   hours: document.getElementById('hours'),
@@ -346,21 +316,11 @@ const containers = {
   seconds: document.getElementById('seconds')
 };
 let prev = {};
-let finalMode = false;
-let ended = false;
-
-function pad(n) { return String(n).padStart(2, '0'); }
 
 function update() {
-  if (ended) return;
   let diff = target - Date.now();
-  
   if (diff <= 0) {
-    if (!ended) {
-        ended = true;
-        // Здесь можно вызвать doEnd() из твоего кода
-        document.getElementById('seconds').textContent = "0";
-    }
+    document.getElementById('countdown').innerHTML = "00:00:00";
     return;
   }
 
@@ -369,27 +329,24 @@ function update() {
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
 
-  if (diff <= 10000 && !finalMode) {
-    finalMode = true;
-    document.getElementById('countdown').classList.add('final-mode');
-    document.getElementById('title').style.opacity = '0';
-  }
-
   const now = {
-    days: pad(d),
-    hours: pad(h),
-    minutes: pad(m),
-    seconds: finalMode ? String(s) : pad(s)
+    days: String(d).padStart(2, '0'),
+    hours: String(h).padStart(2, '0'),
+    minutes: String(m).padStart(2, '0'),
+    seconds: String(s).padStart(2, '0')
   };
 
   for (const key in now) {
     if (now[key] !== prev[key]) {
-      const el = containers[key].querySelector('.current');
+      const container = containers[key];
+      const el = container.querySelector('.current');
       el.textContent = now[key];
+      
+      // Та самая анимация пульсации
       el.classList.remove('pulse-tick');
-      void el.offsetWidth;
+      void el.offsetWidth; 
       el.classList.add('pulse-tick');
-      if (key === 'seconds') playTick();
+      
       prev[key] = now[key];
     }
   }
@@ -398,7 +355,7 @@ function update() {
 setInterval(update, 1000);
 update();
 
-// Разблокировка аудио при первом клике
+// Разблокировка звука
 document.addEventListener('click', () => { if(audioCtx) audioCtx.resume(); }, {once: true});
 </script>
 
