@@ -12,109 +12,97 @@
   box-sizing: border-box;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
-}
-
 body {
+  background: #000;
   color: #fff;
   font-family: 'Press Start 2P', cursive;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  perspective: 1000px;
 }
 
 /* --- ТАЙМЕР --- */
-h1 {
-  font-size: 1.2rem;
-  margin-bottom: 60px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transform: perspective(400px) rotateX(20deg);
-  opacity: 0.8;
-}
-
 .countdown {
   display: flex;
-  gap: 30px;
-  transform: perspective(800px) rotateX(-10deg);
+  gap: 20px;
+  z-index: 10;
 }
 
 .unit {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 100px;
 }
 
 .number {
-  font-size: 3.5rem; /* Чуть меньше из-за широкого пиксельного шрифта */
-  min-width: 120px;
-  text-align: center;
-  position: relative;
-}
-
-.current {
-  display: inline-block;
-  will-change: transform;
-}
-
-/* Резкое увеличение и плавное уменьшение */
-.pulse-tick {
-  animation: pulse-tick 0.8s cubic-bezier(0.15, 0.9, 0.3, 1) forwards;
-}
-
-@keyframes pulse-tick {
-  0%   { transform: scale(1.6); color: #ff0000; }
-  100% { transform: scale(1);   color: #ffffff; }
-}
-
-.label {
-  font-size: 0.6rem;
-  margin-top: 20px;
-  opacity: 0.5;
-}
-
-/* --- КУБИК ВНИЗУ --- */
-#cube-container {
-  position: fixed;
-  bottom: 30px;
-  left: 0;
-  width: 64px; 
-  height: 64px;
-  z-index: 100;
-  cursor: pointer;
-  animation: walk 10s linear infinite alternate;
+  font-size: 3rem;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-#cube-sprite {
+.current {
+  display: inline-block;
+}
+
+/* Анимация пульсации */
+.pulse-tick {
+  animation: pulse-tick 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes pulse-tick {
+  0%   { transform: scale(1.5); color: #ff0000; }
+  100% { transform: scale(1);   color: #ffffff; }
+}
+
+.label {
+  font-size: 0.5rem;
+  margin-top: 15px;
+  opacity: 0.5;
+}
+
+/* --- КУБИК (МЕДЛЕННЫЙ И РОВНЫЙ) --- */
+#cube-container {
+  position: fixed;
+  bottom: 40px;
+  left: -100px; /* Начало за экраном */
   width: 64px;
   height: 64px;
-  image-rendering: pixelated; /* Чтобы пиксели были острыми */
-  object-fit: contain;
+  z-index: 100;
+  cursor: pointer;
+  /* Медленная прогулка через весь экран */
+  animation: walk-smooth 25s linear infinite alternate;
+  image-rendering: pixelated;
 }
 
-@keyframes walk {
-  0% { left: 10%; transform: scaleX(1); }
-  100% { left: 80%; transform: scaleX(-1); }
+#cube-sprite {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  transition: transform 0.3s; /* Плавный разворот */
 }
 
-/* --- ДИАЛОГ (UNDERTALE STYLE) --- */
+@keyframes walk-smooth {
+  0% { transform: translateX(0vw) scaleX(1); }
+  49% { transform: translateX(110vw) scaleX(1); }
+  50% { transform: translateX(110vw) scaleX(-1); }
+  99% { transform: translateX(0vw) scaleX(-1); }
+  100% { transform: translateX(0vw) scaleX(1); }
+}
+
+/* --- ДИАЛОГ --- */
 #dialogue-box {
   position: fixed;
   bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
-  width: 600px;
+  width: 550px;
   max-width: 90%;
-  min-height: 140px;
   background: #000;
   border: 4px solid #fff;
   display: none;
@@ -124,9 +112,15 @@ h1 {
   gap: 20px;
 }
 
-/* 2-кадровая анимация появления */
-#dialogue-box.opening-1 { display: flex; transform: translateX(-50%) scaleY(0.1); }
-#dialogue-box.opening-2 { display: flex; transform: translateX(-50%) scaleY(1); }
+#dialogue-box.active {
+  display: flex;
+  animation: open-diag 0.1s steps(2);
+}
+
+@keyframes open-diag {
+  0% { transform: translateX(-50%) scaleY(0); }
+  100% { transform: translateX(-50%) scaleY(1); }
+}
 
 .diag-cube-wrap {
   width: 80px;
@@ -142,15 +136,14 @@ h1 {
 }
 
 #diag-text {
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.8;
-  color: #fff;
 }
 
 .choices {
   margin-top: 20px;
   display: none;
-  gap: 30px;
+  gap: 20px;
 }
 
 .choice-btn {
@@ -158,91 +151,71 @@ h1 {
   border: none;
   color: #fff;
   font-family: 'Press Start 2P', cursive;
-  font-size: 12px;
+  font-size: 10px;
   cursor: pointer;
 }
 
-.choice-btn:hover {
-  color: #ffff00;
-}
-
-.choice-btn::before {
-  content: '* ';
-}
-
-/* Финальный режим */
-.final-mode .unit:not(#sec-unit) { display: none; }
-.final-mode #seconds { font-size: 10rem; }
+.choice-btn:hover { color: #ffff00; }
+.choice-btn::before { content: '* '; }
 
 @media (max-width: 600px) {
-  .number { font-size: 1.8rem; min-width: 60px; }
-  #dialogue-box { width: 95%; flex-direction: column; align-items: center; text-align: center; }
-  .countdown { gap: 10px; }
+  .number { font-size: 1.5rem; }
+  .unit { min-width: 60px; }
+  #dialogue-box { flex-direction: column; align-items: center; }
 }
 </style>
 </head>
 <body>
 
-<h1 id="title">days left</h1>
-
 <div class="countdown" id="countdown">
-  <div class="unit">
-    <div class="number" id="days"><span class="current">00</span></div>
-    <div class="label">DAYS</div>
-  </div>
-  <div class="unit">
-    <div class="number" id="hours"><span class="current">00</span></div>
-    <div class="label">HOURS</div>
-  </div>
-  <div class="unit">
-    <div class="number" id="minutes"><span class="current">00</span></div>
-    <div class="label">MINUTES</div>
-  </div>
-  <div class="unit" id="sec-unit">
-    <div class="number" id="seconds"><span class="current">00</span></div>
-    <div class="label" id="sec-label">SECONDS</div>
-  </div>
+  <div class="unit"><div class="number" id="days"><span class="current">00</span></div><div class="label">DAYS</div></div>
+  <div class="unit"><div class="number" id="hours"><span class="current">00</span></div><div class="label">HOURS</div></div>
+  <div class="unit"><div class="number" id="minutes"><span class="current">00</span></div><div class="label">MINS</div></div>
+  <div class="unit"><div class="number" id="seconds"><span class="current">00</span></div><div class="label">SECS</div></div>
 </div>
 
 <div id="cube-container">
-  <img src="idle.png" id="cube-sprite" alt="cube">
+  <img src="idle.png" id="cube-sprite">
 </div>
 
 <div id="dialogue-box">
-  <div class="diag-cube-wrap">
-    <img src="idle.png" id="diag-cube-img">
-  </div>
+  <div class="diag-cube-wrap"><img src="idle.png" id="diag-cube-img"></div>
   <div class="diag-content">
     <div id="diag-text"></div>
     <div id="choices" class="choices">
-      <button class="choice-btn" onclick="handleChoice('yes')">Of course</button>
-      <button class="choice-btn" onclick="handleChoice('no')">No</button>
+      <button class="choice-btn" onclick="handleChoice('yes')">OF COURSE</button>
+      <button class="choice-btn" onclick="handleChoice('no')">NO</button>
     </div>
   </div>
 </div>
 
 <script>
-// ТАРГЕТ: 7 июля 2026, 00:00:00
-const target = new Date(2026, 6, 7, 0, 0, 0).getTime();
+const targetDate = new Date(2026, 6, 7, 0, 0, 0).getTime();
 
 let audioCtx = null;
 let beepBuffer = null;
+let tickBuffer = null;
 
-// Инициализация звука
 async function initAudio() {
   if (audioCtx) return;
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  const loadSound = async (url) => {
+    const res = await fetch(url);
+    const buf = await res.arrayBuffer();
+    return await audioCtx.decodeAudioData(buf);
+  };
+
   try {
-    const res = await fetch('D.mp3');
-    const array = await res.arrayBuffer();
-    beepBuffer = await audioCtx.decodeAudioData(array);
-  } catch(e) { console.error("Sound D.mp3 not found"); }
+    beepBuffer = await loadSound('D.mp3');
+    tickBuffer = await loadSound('tick.wav');
+  } catch (e) { console.log("Missing sound files"); }
 }
 
-function playBeep() {
-  if (!audioCtx || !beepBuffer) return;
+function playSound(buffer) {
+  if (!audioCtx || !buffer) return;
   const source = audioCtx.createBufferSource();
-  source.buffer = beepBuffer;
+  source.buffer = buffer;
   source.connect(audioCtx.destination);
   source.start();
 }
@@ -250,77 +223,27 @@ function playBeep() {
 function getOS() {
   const ua = window.navigator.userAgent;
   if (ua.indexOf("Windows") !== -1) return "Windows";
-  if (ua.indexOf("Mac") !== -1) return "macOS";
   if (ua.indexOf("Android") !== -1) return "Android";
   if (ua.indexOf("iPhone") !== -1) return "iOS";
+  if (ua.indexOf("Mac") !== -1) return "macOS";
   return "System";
 }
 
-// ДИАЛОГ
-const diagBox = document.getElementById('dialogue-box');
-const diagText = document.getElementById('diag-text');
-const diagImg = document.getElementById('diag-cube-img');
-const choicesEl = document.getElementById('choices');
-
-async function typeText(text) {
-  diagText.textContent = "";
-  choicesEl.style.display = 'none';
-  for (let i = 0; i < text.length; i++) {
-    diagText.textContent += text[i];
-    if (text[i] !== " ") {
-      diagImg.src = (i % 2 === 0) ? 'talking0.png' : 'talking1.png';
-      playBeep();
-    }
-    await new Promise(r => setTimeout(r, 50));
-  }
-  diagImg.src = 'idle.png';
-}
-
-document.getElementById('cube-container').onclick = async () => {
-  await initAudio();
-  if (diagBox.style.display === 'flex') return;
-
-  // 2-кадровая анимация появления
-  diagBox.className = 'opening-1';
-  diagBox.style.display = 'flex';
-  setTimeout(() => {
-    diagBox.className = 'opening-2';
-    startDialogue();
-  }, 50);
-};
-
-async function startDialogue() {
-  const os = getOS();
-  await typeText(`Hello, ${os} user...`);
-  await new Promise(r => setTimeout(r, 800));
-  await typeText("One week left.");
-  await new Promise(r => setTimeout(r, 800));
-  await typeText("I hope you'll show up in the final seconds on the site, right?");
-  choicesEl.style.display = 'flex';
-}
-
-function handleChoice(val) {
-  if (val === 'yes') {
-    typeText("I knew it. See you soon.");
-  } else {
-    typeText("That's... unfortunate.");
-  }
-  setTimeout(() => { diagBox.style.display = 'none'; }, 3000);
-}
-
-// ТАЙМЕР
+// --- ТАЙМЕР ---
 const containers = {
   days: document.getElementById('days'),
   hours: document.getElementById('hours'),
   minutes: document.getElementById('minutes'),
   seconds: document.getElementById('seconds')
 };
-let prev = {};
+let prevValues = {};
 
-function update() {
-  let diff = target - Date.now();
+function updateTimer() {
+  const now = Date.now();
+  const diff = targetDate - now;
+
   if (diff <= 0) {
-    document.getElementById('countdown').innerHTML = "00:00:00";
+    document.body.innerHTML = "<h1>ARRIVED</h1>";
     return;
   }
 
@@ -329,35 +252,79 @@ function update() {
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
 
-  const now = {
+  const currentValues = {
     days: String(d).padStart(2, '0'),
     hours: String(h).padStart(2, '0'),
     minutes: String(m).padStart(2, '0'),
     seconds: String(s).padStart(2, '0')
   };
 
-  for (const key in now) {
-    if (now[key] !== prev[key]) {
-      const container = containers[key];
-      const el = container.querySelector('.current');
-      el.textContent = now[key];
+  for (const key in currentValues) {
+    if (currentValues[key] !== prevValues[key]) {
+      const el = containers[key].querySelector('.current');
+      el.textContent = currentValues[key];
       
-      // Та самая анимация пульсации
+      // Анимация рывка
       el.classList.remove('pulse-tick');
-      void el.offsetWidth; 
+      void el.offsetWidth;
       el.classList.add('pulse-tick');
       
-      prev[key] = now[key];
+      if (key === 'seconds') playSound(tickBuffer);
+      prevValues[key] = currentValues[key];
     }
   }
 }
 
-setInterval(update, 1000);
-update();
+// --- ДИАЛОГ ---
+const diagBox = document.getElementById('dialogue-box');
+const diagText = document.getElementById('diag-text');
+const diagImg = document.getElementById('diag-cube-img');
+const choicesEl = document.getElementById('choices');
+
+async function startDialogue() {
+  if (diagBox.classList.contains('active')) return;
+  await initAudio();
+  
+  diagBox.classList.add('active');
+  const os = getOS();
+  const daysLeft = Math.floor((targetDate - Date.now()) / 86400000);
+
+  await typeText(`Hello, ${os} user...`);
+  await sleep(1000);
+  await typeText(`${daysLeft} days left.`);
+  await sleep(1000);
+  await typeText(`Hope you'll show up in the final seconds, right?`);
+  choicesEl.style.display = 'flex';
+}
+
+async function typeText(text) {
+  diagText.textContent = "";
+  choicesEl.style.display = 'none';
+  for (let i = 0; i < text.length; i++) {
+    diagText.textContent += text[i];
+    if (text[i] !== " ") {
+      diagImg.src = (i % 2 === 0) ? 'talking0.png' : 'talking1.png';
+      playSound(beepBuffer);
+    }
+    await sleep(60);
+  }
+  diagImg.src = 'idle.png';
+}
+
+function handleChoice(val) {
+  if (val === 'yes') typeText("I'll be waiting.");
+  else typeText("How disappointing...");
+  setTimeout(() => diagBox.classList.remove('active'), 3000);
+}
+
+const sleep = m => new Promise(r => setTimeout(r, m));
+document.getElementById('cube-container').onclick = startDialogue;
+
+setInterval(updateTimer, 1000);
+updateTimer();
 
 // Разблокировка звука
 document.addEventListener('click', () => { if(audioCtx) audioCtx.resume(); }, {once: true});
 </script>
-
 </body>
 </html>
